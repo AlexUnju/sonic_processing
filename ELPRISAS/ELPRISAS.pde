@@ -1,5 +1,6 @@
 import gifAnimation.Gif; // Importa la librería gifAnimation
 import processing.sound.*; // Importa la librería Sound
+private Player sonic;
 
 PImage fondo;
 Parallax parallax;
@@ -20,7 +21,7 @@ color color4Nuevo = #0090fc;
 
 void setup() {
   size(800, 500); // Tamaño de la ventana
-  fondo = loadImage("BACKGROUND.png"); // Asegúrate de que la imagen esté en la carpeta del sketch
+  fondo = loadImage("fondo.png"); // Asegúrate de que la imagen esté en la carpeta del sketch
   parallax = new Parallax(fondo, 0.5, 1.8, -100, -310); // Ajusta la imagen, velocidad, zoom y posición inicial en X e Y
 
   // Carga el GIF animado usando la librería gifAnimation
@@ -33,6 +34,9 @@ void setup() {
 
   // Cambia los colores en la imagen
   cambiarColores(fondo);
+ 
+  sonic = new Player(100, 300, "sonic.gif", this); // Pass `this` to the Player constructor
+
 }
 
 void draw() {
@@ -60,6 +64,20 @@ void dibujaMenu() {
   if (gif != null) {
     image(gif, width / 2 - gif.width / 2, height - 400 + 10); // Centra el GIF en el menú
   }
+  
+  // Control Sonic with arrow keys
+  float dx = 0, dy = 0;
+  if (keyPressed) {
+    if (keyCode == UP) dy = -2;
+    if (keyCode == DOWN) dy = 2;
+    if (keyCode == LEFT) dx = -2;
+    if (keyCode == RIGHT) dx = 2;
+  }
+
+  // Move and display Sonic
+  sonic.mover(dx, dy);
+  sonic.mostrar();
+  
 }
 
 void cambiarColores(PImage img) {
