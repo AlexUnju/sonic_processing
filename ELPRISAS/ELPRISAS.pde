@@ -1,11 +1,14 @@
 import gifAnimation.Gif; // Importa la librería gifAnimation
 import processing.sound.*; // Importa la librería Sound
-private Player sonic;
 
 PImage fondo;
 Parallax parallax;
 Gif gif; // Variable para almacenar el GIF
 SoundFile music; // Variable para almacenar el archivo de música
+Player sonic; // Objeto Sonic
+EndGame endGame; // Objeto EndGame
+
+boolean gameOver = false; // Controla el estado del juego
 
 // Colores originales en hexadecimales
 color color1Original = #771177;
@@ -35,19 +38,24 @@ void setup() {
   // Cambia los colores en la imagen
   cambiarColores(fondo);
  
-  sonic = new Player(100, 300, "sonic.gif", this); // Pass `this` to the Player constructor
-
+  sonic = new Player(100, 300, "sonic.gif", this); // Crea el jugador Sonic
+  endGame = new EndGame(this); // Instancia de la clase EndGame
 }
 
 void draw() {
   background(0);
 
-  // Actualiza y dibuja el fondo parallax
-  parallax.update();
-  parallax.display();
+  if (!gameOver) {
+    // Actualiza y dibuja el fondo parallax
+    parallax.update();
+    parallax.display();
 
-  // Dibuja el menú con el GIF animado en el centro
-  dibujaMenu();
+    // Dibuja el menú con el GIF animado
+    dibujaMenu();
+  } else {
+    // Muestra la pantalla de fin de juego desde la clase EndGame
+    endGame.display();
+  }
 }
 
 void dibujaMenu() {
@@ -65,7 +73,7 @@ void dibujaMenu() {
     image(gif, width / 2 - gif.width / 2, height - 400 + 10); // Centra el GIF en el menú
   }
   
-  // Control Sonic with arrow keys
+  // Control Sonic con teclas
   float dx = 0, dy = 0;
   if (keyPressed) {
     if (keyCode == UP) dy = -2;
@@ -74,10 +82,9 @@ void dibujaMenu() {
     if (keyCode == RIGHT) dx = 2;
   }
 
-  // Move and display Sonic
+  // Mueve y dibuja a Sonic
   sonic.mover(dx, dy);
   sonic.mostrar();
-  
 }
 
 void cambiarColores(PImage img) {

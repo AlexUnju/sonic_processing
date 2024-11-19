@@ -1,37 +1,26 @@
-boolean gameOver = false; // Variable global para controlar el estado del juego
+class EndGame {
+  PApplet p;
 
-void endGameScreen() {
-  // Dibuja la pantalla de fin de juego
-  fill(0, 150);
-  rect(0, 0, width, height); // Fondo semitransparente
-  fill(255, 0, 0);
-  textSize(50);
-  textAlign(CENTER, CENTER);
-  text("Fin del Juego", width / 2, height / 2); // Mensaje principal
-  fill(255);
-  textSize(20);
-  text("Gracias por jugar", width / 2, height / 2 + 50); // Mensaje adicional
+  EndGame(PApplet parent) {
+    this.p = parent;
+  }
+
+  void display() {
+    p.fill(0, 150);
+    p.rect(0, 0, p.width, p.height); // Fondo semitransparente
+    p.fill(255, 0, 0);
+    p.textSize(50);
+    p.textAlign(PApplet.CENTER, PApplet.CENTER);
+    p.text("Fin del Juego", p.width / 2, p.height / 2); // Mensaje principal
+    p.fill(255);
+    p.textSize(20);
+    p.text("Gracias por jugar", p.width / 2, p.height / 2 + 50); // Mensaje adicional
+  }
 }
 
-//Agregar al draw:
-void draw() {
-  background(0);
-
-  if (!gameOver) {
-    // Actualiza y dibuja el fondo parallax
-    parallax.update();
-    parallax.display();
-
-    // Dibuja el menú con el GIF animado
-    dibujaMenu();
-
-    // Aquí puedes agregar condiciones para terminar el juego
-    // Ejemplo: si el jugador pierde o gana, establece gameOver en true
-    if (frameCount > 1000) { // Simulación de fin de juego
-      gameOver = true;
-    }
-  } else {
-    // Muestra la pantalla de fin de juego
-    endGameScreen();
+// Detecta la tecla espacio para activar el fin del juego
+void keyPressed() {
+  if (key == ' ') { // Si se presiona la barra espaciadora
+    gameOver = true;
   }
 }
