@@ -44,7 +44,7 @@ void setup() {
   sonic = new Player(100, 300, "sonic.gif", this); // Crea el jugador Sonic
   endGame = new EndGame(this); // Instancia de la clase EndGame
   
-  spriteSheet = loadImage("enemy.png"); // Cargar la hoja de sprites desde /data
+  spriteSheet = loadImage("buzzer.png"); // Cargar la hoja de sprites desde /data
   enemigo = new Enemigo(spriteSheet, 300, 300, 100, 10); // Crear un enemigo
 }
 

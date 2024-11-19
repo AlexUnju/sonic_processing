@@ -24,7 +24,7 @@ class Enemigo {
     this.currentFrame = 0;
 
     // Calcular tamaño de cada sprite
-    this.width = spriteSheet.width / 4.0;
+    this.width = spriteSheet.width / 8.0;
     this.height = spriteSheet.height / 5.0;
 
     // Inicializar los arreglos de animación
