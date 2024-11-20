@@ -9,6 +9,8 @@ Player sonic; // Objeto Sonic
 EndGame endGame; // Objeto EndGame
 PImage spriteSheet;  // Declarar la imagen de sprites
 Enemigo enemigo;     // Instancia de la clase Enemigo
+PImage spriteSheet2;
+Enemies2 enemigo2;
 HUD hud; // HUD verificar que todo este bien
 
 
@@ -47,9 +49,12 @@ void setup() {
  
   sonic = new Player(100, 300, "sonic.gif", this); // Crea el jugador Sonic
   endGame = new EndGame(this); // Instancia de la clase EndGame
-  
+  // gestiona el sprite del enemigo
   spriteSheet = loadImage("buzzer.png"); // Cargar la hoja de sprites desde /data
   enemigo = new Enemigo(spriteSheet, 300, 300, 100, 10); // Crear un enemigo
+   // enemigo 2
+  spriteSheet = loadImage("buzzer.png");
+  enemigo2 = new Enemies2(spriteSheet, 300, 300, 120, 15); // Variante del enemigo
 }
 
 void draw() {
@@ -66,9 +71,12 @@ void draw() {
     // Muestra la pantalla de fin de juego desde la clase EndGame
     endGame.display();
   }
+  //anze:
   enemigo.mostrar(); // Mostrar al enemigo en pantalla
   enemigo.mover(-1, 0); // Hacer que el enemigo se mueva hacia la izquierda
-  
+  enemigo2.mostrar();
+  enemigo2.mover(-3, 0);
+
   // Mostrar el HUD
   hud.mostrar();
 
