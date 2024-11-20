@@ -9,6 +9,7 @@ Player sonic; // Objeto Sonic
 EndGame endGame; // Objeto EndGame
 PImage spriteSheet;  // Declarar la imagen de sprites
 Enemigo enemigo;     // Instancia de la clase Enemigo
+HUD hud; // HUD verificar que todo este bien
 
 
 boolean gameOver = false; // Controla el estado del juego
@@ -29,6 +30,9 @@ void setup() {
   size(800, 500); // Tamaño de la ventana
   fondo = loadImage("fondo.png"); // Asegúrate de que la imagen esté en la carpeta del sketch
   parallax = new Parallax(fondo, 0.5, 1.8, -100, -310); // Ajusta la imagen, velocidad, zoom y posición inicial en X e Y
+  //HUD
+  hud = new HUD(3, 60); // 3 vidas iniciales y 60 segundos de tiempo
+
 
   // Carga el GIF animado usando la librería gifAnimation
   gif = new Gif(this, "MENU.gif"); // Asegúrate de que el archivo GIF esté en la carpeta del sketch
@@ -64,6 +68,14 @@ void draw() {
   }
   enemigo.mostrar(); // Mostrar al enemigo en pantalla
   enemigo.mover(-1, 0); // Hacer que el enemigo se mueva hacia la izquierda
+  
+  // Mostrar el HUD
+  hud.mostrar();
+
+  // Verificar si el tiempo se terminó
+  if (hud.tiempoTerminado()) {
+    gameOver = true;
+  }
 }
 
 void dibujaMenu() {
