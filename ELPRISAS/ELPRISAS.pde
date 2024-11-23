@@ -47,7 +47,7 @@ void setup() {
   // Cambia los colores en la imagen
   cambiarColores(fondo);
  
-  sonic = new Player(100, 300, "sonic.gif", this); // Crea el jugador Sonic
+  sonic = new Player(width / 2, height / 2, "sonic.gif", 50, 50, this); // Sonic scaled to 50x50 pixels
   endGame = new EndGame(this); // Instancia de la clase EndGame
   // gestiona el sprite del enemigo
   spriteSheet = loadImage("buzzer.png"); // Cargar la hoja de sprites desde /data
