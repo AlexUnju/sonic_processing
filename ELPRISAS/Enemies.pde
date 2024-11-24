@@ -81,9 +81,10 @@ class Enemigo {
     if (frameCounter >= frameDelay) {
       currentFrame++;
       if (estado == 2 && currentFrame >= totalFrames) {
-     
+        // Detener animación al final de la explosión
+        currentFrame = totalFrames - 1;
       } else {
-        currentFrame %= totalFrames;
+        currentFrame %= totalFrames; // Asegura que el índice sea válido
       }
       frameCounter = 0;
     }
