@@ -12,6 +12,7 @@ Enemigo enemigo;     // Instancia de la clase Enemigo
 PImage spriteSheet2;
 Enemies2 enemigo2;
 HUD hud; // HUD verificar que todo este bien
+Collision collisionHandler; // Declaración global
 
 
 boolean gameOver = false; // Controla el estado del juego
@@ -35,6 +36,8 @@ void setup() {
   //HUD
   hud = new HUD(3, 60); // 3 vidas iniciales y 60 segundos de tiempo
 
+  //Collision
+  collisionHandler = new Collision();
 
   // Carga el GIF animado usando la librería gifAnimation
   gif = new Gif(this, "MENU.gif"); // Asegúrate de que el archivo GIF esté en la carpeta del sketch
@@ -84,6 +87,15 @@ void draw() {
   if (hud.tiempoTerminado()) {
     gameOver = true;
   }
+  // Verificar colisión entre Sonic y Enemigo 1
+  collisionHandler.handleCollision(sonic, enemigo, hud);
+
+  // Verificar colisión entre Sonic y Enemigo 2
+  collisionHandler.handleCollision(sonic, enemigo2, hud);
+
+  // Mostrar el HUD actualizado
+  hud.mostrar();
+
 }
 
 void dibujaMenu() {
