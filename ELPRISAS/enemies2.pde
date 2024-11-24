@@ -11,6 +11,7 @@ class Enemies2 {
   int estado;          // 0: Movimiento, 1: Estático, 2: Explosión
   int frameDelay;      // Velocidad de animación
   int frameCounter;    // Contador para control de frames
+  boolean eliminado;   // Indica si el enemigo debe eliminarse
   
   Enemies2(PImage spriteSheet, float x, float y, int vida, int daño) {
     this.spriteSheet = spriteSheet;
@@ -22,6 +23,7 @@ class Enemies2 {
     this.frameDelay = 5;
     this.frameCounter = 0;
     this.currentFrame = 0;
+    this.eliminado = false; // No eliminado al inicio
 
     // Calcular tamaño de cada sprite
     this.width = spriteSheet.width / 8.0;
@@ -57,6 +59,8 @@ class Enemies2 {
   }
 
   void mostrar() {
+    if (eliminado) return; // Si está eliminado, no lo mostramos
+
     PImage[] animacionActual;
     switch (estado) {
       case 0:
@@ -81,7 +85,7 @@ class Enemies2 {
     if (frameCounter >= frameDelay) {
       currentFrame++;
       if (estado == 2 && currentFrame >= totalFrames) {
-      
+        eliminado = true; // Marca el enemigo como eliminado al terminar la explosión
       } else {
         currentFrame %= totalFrames;
       }
@@ -90,10 +94,12 @@ class Enemies2 {
   }
 
   void mover(float velocidadX, float velocidadY) {
-    if (estado != 2) { // No moverse si está en explosión
+    if (estado != 2 && !eliminado) { // No moverse si está en explosión o eliminado
       this.x += velocidadX;
       this.y += velocidadY;
     }
   }
-
+  boolean isEliminado() {
+    return eliminado;
+  }
 }

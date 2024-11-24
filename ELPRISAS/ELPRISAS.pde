@@ -64,39 +64,34 @@ void draw() {
   background(0);
 
   if (!gameOver) {
-    // Actualiza y dibuja el fondo parallax
     parallax.update();
     parallax.display();
-
-    // Dibuja el menú con el GIF animado
     dibujaMenu();
   } else {
-    // Muestra la pantalla de fin de juego desde la clase EndGame
     endGame.display();
   }
-  //anze:
-  enemigo.mostrar(); // Mostrar al enemigo en pantalla
-  enemigo.mover(-1, 0); // Hacer que el enemigo se mueva hacia la izquierda
-  enemigo2.mostrar();
-  enemigo2.mover(-3, 0);
 
-  // Mostrar el HUD
+  // Gestionar enemigos 1
+  if (!enemigo.isEliminado()) {
+    enemigo.mostrar();
+    enemigo.mover(-1, 0);
+    collisionHandler.handleCollision(sonic, enemigo, hud);
+  }
+
+  // Gestionar enemigos 2
+  if (!enemigo2.isEliminado()) {
+    enemigo2.mostrar();
+    enemigo2.mover(-3, 0);
+    collisionHandler.handleCollision(sonic, enemigo2, hud);
+  }
+
   hud.mostrar();
 
-  // Verificar si el tiempo se terminó
   if (hud.tiempoTerminado()) {
     gameOver = true;
   }
-  // Verificar colisión entre Sonic y Enemigo 1
-  collisionHandler.handleCollision(sonic, enemigo, hud);
-
-  // Verificar colisión entre Sonic y Enemigo 2
-  collisionHandler.handleCollision(sonic, enemigo2, hud);
-
-  // Mostrar el HUD actualizado
-  hud.mostrar();
-
 }
+
 
 void dibujaMenu() {
   fill(255, 150);
