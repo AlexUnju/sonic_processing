@@ -67,48 +67,81 @@ void setup() {
 void draw() {
   background(0);
 
-  if (maquinaDeEstados.estadoActual == GameState.INICIO) {
+  // Mostrar Parallax en MENU e INICIO
+  if (maquinaDeEstados.estadoActual == GameState.MENU || maquinaDeEstados.estadoActual == GameState.INICIO) {
     parallax.update();
     parallax.display();
+  }
 
-    escenario.mostrar();
-    escenario.verificarColision(sonic);
+  // Manejo de estados del juego
+  switch (maquinaDeEstados.estadoActual) {
+    case MENU:
+      menu.display(); // Mostrar el menú
+      break;
 
-    // Control del jugador
-    float dx = 0, dy = 0;
-    if (keyPressed) {
-      if (keyCode == LEFT) dx = -5;
-      if (keyCode == RIGHT) dx = 5;
-      if (keyCode == UP && sonic.getPosicion().y >= escenario.getFloorY() - sonic.alto) dy = -20; // Salto simple
-    }
-    sonic.mover(dx, dy);
+    case INICIO:
+      escenario.mostrar();
+      escenario.verificarColision(sonic);
 
-    // Gravedad
-    if (sonic.getPosicion().y < escenario.getFloorY() - sonic.alto) {
-      sonic.mover(0, 0.5); // Gravedad
-    }
-    sonic.mostrar();
+      // Control del jugador
+      float dx = 0, dy = 0;
+      if (keyPressed) {
+        if (keyCode == LEFT) dx = -5;
+        if (keyCode == RIGHT) dx = 5;
+        if (keyCode == UP && sonic.getPosicion().y >= escenario.getFloorY() - sonic.alto) dy = -20; // Salto simple
+      }
+      sonic.mover(dx, dy);
 
-    // Mostrar enemigos y manejar colisiones
-    if (!enemigo.isEliminado()) {
-      enemigo.mostrar();
-      enemigo.mover(-1, 0);
-      collisionHandler.handleCollision(sonic, enemigo, hud);
-    }
+      // Gravedad
+      if (sonic.getPosicion().y < escenario.getFloorY() - sonic.alto) {
+        sonic.mover(0, 0.5); // Gravedad
+      }
+      sonic.mostrar();
 
-    if (!enemigo2.isEliminado()) {
-      enemigo2.mostrar();
-      enemigo2.mover(-3, 0);
-      collisionHandler.handleCollision(sonic, enemigo2, hud);
-    }
+      // Mostrar enemigos y manejar colisiones
+      if (!enemigo.isEliminado()) {
+        enemigo.mostrar();
+        enemigo.mover(-1, 0);
+        collisionHandler.handleCollision(sonic, enemigo, hud);
+      }
 
-    // Mostrar HUD
-    hud.mostrar();
+      if (!enemigo2.isEliminado()) {
+        enemigo2.mostrar();
+        enemigo2.mover(-3, 0);
+        collisionHandler.handleCollision(sonic, enemigo2, hud);
+      }
 
-    // Verificar condiciones de victoria o derrota
-    if (hud.tiempoTerminado()) {
-      maquinaDeEstados.cambiarEstado(GameState.DERROTA);
-    }
+      // Mostrar HUD
+      hud.mostrar();
+
+      // Verificar condiciones de victoria o derrota
+      if (hud.tiempoTerminado()) {
+        maquinaDeEstados.cambiarEstado(GameState.DERROTA);
+      }
+      break;
+
+    case PAUSA:
+      fill(255, 150);
+      rect(0, 0, width, height); // Fondo semitransparente
+      fill(255);
+      textAlign(CENTER, CENTER);
+      textSize(32);
+      text("PAUSA\nPresiona ESPACIO para continuar", width / 2, height / 2);
+      break;
+
+    case VICTORIA:
+      fill(0, 255, 0);
+      textAlign(CENTER, CENTER);
+      textSize(32);
+      text("¡Felicidades, has ganado!\nPresiona ENTER para volver al menú", width / 2, height / 2);
+      break;
+
+    case DERROTA:
+      fill(255, 0, 0);
+      textAlign(CENTER, CENTER);
+      textSize(32);
+      text("GAME OVER\nPresiona ENTER para volver al menú", width / 2, height / 2);
+      break;
   }
 }
 

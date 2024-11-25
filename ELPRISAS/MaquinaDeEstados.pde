@@ -12,8 +12,6 @@ class MaquinaDeEstados {
   }
 
   void display() {
-    p.background(0); // Fondo negro predeterminado
-
     switch (estadoActual) {
       case MENU:
         mostrarMenu();
