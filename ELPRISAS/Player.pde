@@ -49,8 +49,13 @@ class Player {
     posicion.x += dx;
     posicion.y += dy;
   }
+  
+  PVector getVelocidad() {
+    return velocidad;
+  }
 
   PVector getPosicion() {
     return posicion;
   }
+  
 }
