@@ -76,8 +76,8 @@ void draw() {
       sonic.mover(0, 0.5); // Gravedad
     }
     
-    sonic.mostrar();
-    
+    sonic.mostrar();  // Esto ya no debería dar el error
+
     if (!enemigo.isEliminado()) {
       enemigo.mostrar();
       enemigo.mover(-1, 0);
