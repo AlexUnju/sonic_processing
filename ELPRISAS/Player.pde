@@ -7,6 +7,7 @@ class Player {
   PImage[] frames;  // Frames de la animación
   int ancho, alto;  // Tamaño del sprite
   PApplet p;        // Referencia a Processing
+  boolean mirandoDerecha = true; // Dirección del personaje
 
   // Constructor extendido
   Player(float x, float y, String spritePath, int ancho, int alto, PApplet p) {
@@ -37,7 +38,17 @@ class Player {
   }
 
   void dibujar() {
-    p.image(frames[currentFrame], posicion.x, posicion.y, ancho, alto);
+    p.pushMatrix(); // Guarda el estado actual de la matriz
+    p.translate(posicion.x, posicion.y); // Mueve al origen del personaje
+
+    // Voltea horizontalmente si está mirando a la izquierda
+    if (!mirandoDerecha) {
+      p.scale(-1, 1); // Voltea en el eje X
+      p.translate(-ancho, 0); // Ajusta la posición tras voltear
+    }
+
+    p.image(frames[currentFrame], 0, 0, ancho, alto); // Dibuja el sprite
+    p.popMatrix(); // Restaura la matriz original
   }
 
   // Método para mostrar el jugador en la pantalla
@@ -46,6 +57,9 @@ class Player {
   }
 
   void mover(float dx, float dy) {
+    if (dx > 0) mirandoDerecha = true;   // Movimiento a la derecha
+    if (dx < 0) mirandoDerecha = false;  // Movimiento a la izquierda
+
     posicion.x += dx;
     posicion.y += dy;
   }
@@ -57,5 +71,4 @@ class Player {
   PVector getPosicion() {
     return posicion;
   }
-  
 }
