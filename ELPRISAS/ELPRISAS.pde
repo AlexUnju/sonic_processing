@@ -70,26 +70,26 @@ void draw() {
   if (maquinaDeEstados.estadoActual == GameState.INICIO) {
     parallax.update();
     parallax.display();
-    
+
     escenario.mostrar();
     escenario.verificarColision(sonic);
-    
-    // Control de Sonic
+
+    // Control del jugador
     float dx = 0, dy = 0;
     if (keyPressed) {
       if (keyCode == LEFT) dx = -5;
       if (keyCode == RIGHT) dx = 5;
-      if (keyCode == UP && sonic.getPosicion().y >= escenario.getFloorY() - sonic.alto) dy = -10; // Salto simple
+      if (keyCode == UP && sonic.getPosicion().y >= escenario.getFloorY() - sonic.alto) dy = -20; // Salto simple
     }
     sonic.mover(dx, dy);
-    
-    // Aplicar gravedad
+
+    // Gravedad
     if (sonic.getPosicion().y < escenario.getFloorY() - sonic.alto) {
       sonic.mover(0, 0.5); // Gravedad
     }
-    
-    sonic.mostrar();  // Esto ya no debería dar el error
+    sonic.mostrar();
 
+    // Mostrar enemigos y manejar colisiones
     if (!enemigo.isEliminado()) {
       enemigo.mostrar();
       enemigo.mover(-1, 0);
@@ -102,17 +102,12 @@ void draw() {
       collisionHandler.handleCollision(sonic, enemigo2, hud);
     }
 
+    // Mostrar HUD
     hud.mostrar();
-    menu.display();
 
-    // Comprobación de fin del juego
+    // Verificar condiciones de victoria o derrota
     if (hud.tiempoTerminado()) {
       maquinaDeEstados.cambiarEstado(GameState.DERROTA);
-    }
-
-    // Simular condición de victoria
-    if (hud.tiempoTerminado()) {
-      maquinaDeEstados.cambiarEstado(GameState.VICTORIA);
     }
   }
 }
