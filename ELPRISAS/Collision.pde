@@ -1,4 +1,4 @@
-class Collision {
+private class Collision {
   // Constructor vacío, ya que no necesitamos inicializar nada al crear un objeto Collision
   Collision() {}
 
@@ -11,7 +11,7 @@ class Collision {
   }
 
   // Manejo de la colisión entre Sonic y cualquier enemigo (hereda de EnemigosBase)
-  void handleCollision(Player player, EnemigosBase enemigo, HUD hud) {
+  private void handleCollision(Player player, EnemigosBase enemigo, HUD hud) {
     PVector playerPos = player.getPosicion();
     float playerWidth = player.ancho;
     float playerHeight = player.alto;

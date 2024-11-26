@@ -9,34 +9,34 @@ enum GameState {
   DERROTA    // Estado de derrota
 }
 
-PImage fondo;
-Parallax parallax;
-SoundFile music;
-Player sonic;
-PImage spriteSheet; // Imagen de los sprites de los enemigos
-PImage spriteSheet2;
-HUD hud;
-MaquinaDeEstados maquinaDeEstados;
-Menu menu;
-Collision collisionHandler;
-Escenario escenario;
-SpawnerEnemigos spawner; // Instancia del spawner
-float deltaTime;  // Variable para almacenar el tiempo entre frames
+private PImage fondo;
+private Parallax parallax;
+private SoundFile music;
+private Player sonic;
+private PImage spriteSheet; // Imagen de los sprites de los enemigos
+public PImage spriteSheet2;
+private HUD hud;
+private MaquinaDeEstados maquinaDeEstados;
+private Menu menu;
+private Collision collisionHandler;
+private Escenario escenario;
+private SpawnerEnemigos spawner; // Instancia del spawner
+private float deltaTime;  // Variable para almacenar el tiempo entre frames
 
-boolean gameOver = false;
+public boolean gameOver = false;
 
 // Colores
-color color1Original = #771177;
-color color2Original = #993399;
-color color3Original = #dd77dd;
-color color4Original = #bb55bb;
+private color color1Original = #771177;
+private color color2Original = #993399;
+private color color3Original = #dd77dd;
+private color color4Original = #bb55bb;
 
-color color1Nuevo = #b4d6f0;
-color color2Nuevo = #0092ff;
-color color3Nuevo = #ffffff;
-color color4Nuevo = #0090fc;
+private color color1Nuevo = #b4d6f0;
+private color color2Nuevo = #0092ff;
+private color color3Nuevo = #ffffff;
+private color color4Nuevo = #0090fc;
 
-void setup() {
+public void setup() {
   size(800, 500);
   fondo = loadImage("fondo.png");
 
@@ -55,13 +55,13 @@ void setup() {
  
   escenario = new Escenario(this, height - 50); // El piso está a 100 píxeles del fondo
   sonic = new Player(width / 2, escenario.getFloorY() - 50, "sonic.gif", 50, 50, this);
-  menu = new Menu(this, "MENU.gif", sonic, "Menú Parallax");
+  menu = new Menu(this, "MENU.gif", sonic, "Menú Principal\nPresiona ENTER para comenzar");
                                                                                             
   spriteSheet = loadImage("buzzer.png"); // Cargar sprite sheet
   spawner = new SpawnerEnemigos(spriteSheet);
 }
 
-void draw() {
+public void draw() {
   background(0);
 
   // Mostrar Parallax en MENU e INICIO
@@ -138,7 +138,7 @@ void draw() {
   }
 }
 
-void cambiarColores(PImage img) {
+public void cambiarColores(PImage img) {
   img.loadPixels();
   
   for (int i = 0; i < img.pixels.length; i++) {
@@ -158,7 +158,7 @@ void cambiarColores(PImage img) {
   img.updatePixels();
 }
 
-boolean esColorCercano(color c, color original) {
+private boolean esColorCercano(color c, color original) {
   float r1 = red(c);
   float g1 = green(c);
   float b1 = blue(c);
@@ -169,7 +169,7 @@ boolean esColorCercano(color c, color original) {
   return dif < 30;
 }
 
-void keyPressed() {
+public void keyPressed() {
   switch (maquinaDeEstados.estadoActual) {
     case MENU:
       if (key == ENTER) {

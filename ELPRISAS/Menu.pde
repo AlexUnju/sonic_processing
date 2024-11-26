@@ -2,7 +2,7 @@ import gifAnimation.Gif;
 import processing.core.PApplet;
 import processing.core.PImage;
 
-class Menu {
+private class Menu {
   // Variables privadas
   private PApplet sketch;
   private Gif gif;

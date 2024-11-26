@@ -1,6 +1,6 @@
 import processing.core.PImage;
 
-class Escenario {
+private class Escenario {
   private PApplet sketch;
   private float floorY;
   private ArrayList<Obstaculo> obstaculos;

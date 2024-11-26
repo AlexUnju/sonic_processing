@@ -1,4 +1,4 @@
-class MaquinaDeEstados {
+private class MaquinaDeEstados {
   PApplet p;
   GameState estadoActual;
 

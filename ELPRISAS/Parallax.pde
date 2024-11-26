@@ -1,8 +1,8 @@
-class Parallax {
-  PImage img;
-  PVector position;   // Vector para la posición actual de la imagen
-  float velocidad;
-  float zoom;
+private class Parallax {
+  private PImage img;
+  private PVector position;   // Vector para la posición actual de la imagen
+  private float velocidad;
+  private float zoom;
 
   Parallax(PImage img, float velocidad, float zoom, float startX, float startY) {
     this.img = img;

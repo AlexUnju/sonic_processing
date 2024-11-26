@@ -1,4 +1,4 @@
-class HUD {
+private class HUD {
   private int vidas;          // Número de vidas restantes
   private int puntos;         // Puntos acumulados
   private int tiempoMaximo;   // Tiempo límite en segundos

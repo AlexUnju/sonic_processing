@@ -1,11 +1,11 @@
-class SpawnerEnemigos {
-  ArrayList<EnemigosBase> enemigos;
-  PImage spriteSheet;
+private class SpawnerEnemigos {
+  private ArrayList<EnemigosBase> enemigos;
+  private PImage spriteSheet;
 
-  float tiempoContador = 0;   // Contador de tiempo transcurrido
-  float tiempoGeneracion = 10.0; // Tiempo total del ciclo (en segundos)
-  int enemigosPorCiclo = 3;  // Número de enemigos a generar por ciclo
-  int enemigosGenerados = 0; // Contador de enemigos generados en el ciclo actual
+  private float tiempoContador = 0;   // Contador de tiempo transcurrido
+  private float tiempoGeneracion = 10.0; // Tiempo total del ciclo (en segundos)
+  private int enemigosPorCiclo = 3;  // Número de enemigos a generar por ciclo
+  private int enemigosGenerados = 0; // Contador de enemigos generados en el ciclo actual
 
   SpawnerEnemigos(PImage spriteSheet) {
     this.spriteSheet = spriteSheet;

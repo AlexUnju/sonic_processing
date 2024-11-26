@@ -1,13 +1,13 @@
-class Player {
-  PVector posicion;
-  PVector velocidad;
-  int currentFrame; // Índice del frame actual
-  int frameDelay;   // Para controlar la velocidad de la animación
-  int delayCount;   // Contador para el retraso
-  PImage[] frames;  // Frames de la animación
-  int ancho, alto;  // Tamaño del sprite
-  PApplet p;        // Referencia a Processing
-  boolean mirandoDerecha = true; // Dirección del personaje
+private class Player {
+  private PVector posicion;
+  private PVector velocidad;
+  private int currentFrame; // Índice del frame actual
+  private int frameDelay;   // Para controlar la velocidad de la animación
+  private int delayCount;   // Contador para el retraso
+  private PImage[] frames;  // Frames de la animación
+  private int ancho, alto;  // Tamaño del sprite
+  private PApplet p;        // Referencia a Processing
+  private boolean mirandoDerecha = true; // Dirección del personaje
 
   // Constructor extendido
   Player(float x, float y, String spritePath, int ancho, int alto, PApplet p) {
