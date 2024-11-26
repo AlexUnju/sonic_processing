@@ -96,17 +96,17 @@ public void draw() {
       }
       sonic.mostrar();
 
-<<<<<<< Updated upstream
+
      // Generar enemigos periódicamente
       spawner.actualizarEnemigos(deltaTime); // Pasar deltaTime a actualizarEnemigos
-=======
+
       // Actualizar enemigos y verificar colisiones
-      spawner.spawnEnemigo();
+      
       spawner.actualizarEnemigos(deltaTime);
       for (EnemigosBase enemigo : spawner.enemigos) {
         collisionHandler.handleCollision(sonic, enemigo, hud);
       }
->>>>>>> Stashed changes
+
 
       // Mostrar HUD
       hud.mostrar();
