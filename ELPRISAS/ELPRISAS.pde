@@ -8,21 +8,20 @@ enum GameState {
   VICTORIA,  // Estado de victoria
   DERROTA    // Estado de derrota
 }
-SpawnerEnemigos spawner; // Instancia del spawner
 
 PImage fondo;
 Parallax parallax;
 SoundFile music;
 Player sonic;
-MaquinaDeEstados maquinaDeEstados;
 PImage spriteSheet; // Imagen de los sprites de los enemigos
-
 PImage spriteSheet2;
-
 HUD hud;
-Collision collisionHandler;
+MaquinaDeEstados maquinaDeEstados;
 Menu menu;
+Collision collisionHandler;
 Escenario escenario;
+SpawnerEnemigos spawner; // Instancia del spawner
+float deltaTime;  // Variable para almacenar el tiempo entre frames
 
 boolean gameOver = false;
 
@@ -36,8 +35,6 @@ color color1Nuevo = #b4d6f0;
 color color2Nuevo = #0092ff;
 color color3Nuevo = #ffffff;
 color color4Nuevo = #0090fc;
-
-float deltaTime;  // Variable para almacenar el tiempo entre frames
 
 void setup() {
   size(800, 500);
@@ -60,8 +57,8 @@ void setup() {
   sonic = new Player(width / 2, escenario.getFloorY() - 50, "sonic.gif", 50, 50, this);
   menu = new Menu(this, "MENU.gif", sonic, "Menú Parallax");
                                                                                             
-    spriteSheet = loadImage("buzzer.png"); // Cargar sprite sheet
-    spawner = new SpawnerEnemigos(spriteSheet);
+  spriteSheet = loadImage("buzzer.png"); // Cargar sprite sheet
+  spawner = new SpawnerEnemigos(spriteSheet);
 }
 
 void draw() {
@@ -72,7 +69,7 @@ void draw() {
     parallax.update();
     parallax.display();
   }
- // Calcular el deltaTime (tiempo entre cuadros)
+  // Calcular el deltaTime (tiempo entre cuadros)
   deltaTime = millis() / 1000.0; // Dividir entre 1000 para convertir milisegundos a segundos
 
   // Manejo de estados del juego
@@ -80,8 +77,7 @@ void draw() {
     case MENU:
       menu.display(); // Mostrar el menú
       break;
-
-    case INICIO:
+     case INICIO:
       escenario.mostrar();
       escenario.verificarColision(sonic);
 
@@ -100,23 +96,22 @@ void draw() {
       }
       sonic.mostrar();
 
-    spawner.spawnEnemigo(); // Generar enemigos periódicamente
-   spawner.actualizarEnemigos(deltaTime); // Pasar deltaTime a actualizarEnemigos
+      spawner.spawnEnemigo(); // Generar enemigos periódicamente
+      spawner.actualizarEnemigos(deltaTime); // Pasar deltaTime a actualizarEnemigos
 
     // Dentro del case INICIO:
-for (EnemigosBase enemigo : spawner.enemigos) {
-  collisionHandler.handleCollision(sonic, enemigo, hud);  // Verifica la colisión
-}
+    for (EnemigosBase enemigo : spawner.enemigos) {
+      collisionHandler.handleCollision(sonic, enemigo, hud);  // Verifica la colisión
+  }
 
-   
-      // Mostrar HUD
-      hud.mostrar();
+    // Mostrar HUD
+    hud.mostrar();
 
-      // Verificar condiciones de victoria o derrota
-      if (hud.tiempoTerminado()) {
-        maquinaDeEstados.cambiarEstado(GameState.DERROTA);
-      }
-      break;
+    // Verificar condiciones de victoria o derrota
+    if (hud.tiempoTerminado()) {
+      maquinaDeEstados.cambiarEstado(GameState.DERROTA);
+    }
+    break;
 
     case PAUSA:
       fill(255, 150);
@@ -167,13 +162,10 @@ boolean esColorCercano(color c, color original) {
   float r1 = red(c);
   float g1 = green(c);
   float b1 = blue(c);
-
   float r2 = red(original);
   float g2 = green(original);
   float b2 = blue(original);
-
   float dif = dist(r1, g1, b1, r2, g2, b2);
-  
   return dif < 30;
 }
 

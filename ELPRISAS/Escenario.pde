@@ -6,8 +6,6 @@ class Escenario {
   private ArrayList<Obstaculo> obstaculos;
   private int colorObstaculos;
   private PImage imagenFondo;
-  
-
   /**
    * Constructor de la clase Escenario.
    * @param sketch Referencia al PApplet principal.

@@ -9,7 +9,6 @@ class Menu {
   private Player sonic;
   private int menuHeight;
   private String menuText;
-
   /**
    * Constructor de la clase Menu.
    * @param sketch Referencia al PApplet principal.
