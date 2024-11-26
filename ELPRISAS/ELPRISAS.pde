@@ -96,7 +96,7 @@ public void draw() {
       }
       sonic.mostrar();
 
-      spawner.spawnEnemigo(); // Generar enemigos periódicamente
+     // Generar enemigos periódicamente
       spawner.actualizarEnemigos(deltaTime); // Pasar deltaTime a actualizarEnemigos
 
     // Dentro del case INICIO:
