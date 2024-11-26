@@ -1,13 +1,12 @@
-import processing.core.PApplet;
-import processing.core.PVector;
-import java.util.ArrayList;
+import processing.core.PImage;
 
 class Escenario {
   private PApplet sketch;
   private float floorY;
   private ArrayList<Obstaculo> obstaculos;
-  private int colorPiso;
   private int colorObstaculos;
+  private PImage imagenFondo;
+  
 
   /**
    * Constructor de la clase Escenario.
@@ -18,8 +17,10 @@ class Escenario {
     this.sketch = sketch;
     this.floorY = floorY;
     this.obstaculos = new ArrayList<Obstaculo>();
-    this.colorPiso = sketch.color(100, 200, 100);
     this.colorObstaculos = sketch.color(150, 75, 0);
+    
+    // Cargar la imagen del fondo
+    this.imagenFondo = sketch.loadImage("fondoescenario.png");
     
     inicializarObstaculos();
   }
@@ -31,12 +32,21 @@ class Escenario {
   }
 
   public void mostrar() {
+    // Dibujar primitivas (piso y obstáculos) primero
     dibujarPiso();
     dibujarObstaculos();
+    
+    // Luego dibujar la imagen del escenario por encima
+    dibujarFondo();
+  }
+
+  private void dibujarFondo() {
+    // Dibujar la imagen del fondo encima
+    sketch.image(imagenFondo, 0, 0, sketch.width, sketch.height);
   }
 
   private void dibujarPiso() {
-    sketch.fill(colorPiso);
+    sketch.fill(100, 200, 100);
     sketch.rect(0, floorY, sketch.width, sketch.height - floorY);
   }
 
@@ -48,15 +58,12 @@ class Escenario {
   }
 
   public void verificarColision(Player jugador) {
-    // Colisión con el piso
     if (jugador.getPosicion().y + jugador.alto > floorY) {
       jugador.getPosicion().y = floorY - jugador.alto;
     }
 
-    // Colisión con obstáculos
     for (Obstaculo obstaculo : obstaculos) {
       if (obstaculo.colisionaCon(jugador)) {
-        // Manejar la colisión (por ejemplo, detener al jugador)
         jugador.getPosicion().x -= jugador.velocidad.x;
         jugador.getPosicion().y -= jugador.velocidad.y;
       }
@@ -81,28 +88,11 @@ class Escenario {
     }
   }
 
-  // Getters y setters
   public float getFloorY() {
     return floorY;
   }
 
   public void setFloorY(float floorY) {
     this.floorY = floorY;
-  }
-
-  public int getColorPiso() {
-    return colorPiso;
-  }
-
-  public void setColorPiso(int colorPiso) {
-    this.colorPiso = colorPiso;
-  }
-
-  public int getColorObstaculos() {
-    return colorObstaculos;
-  }
-
-  public void setColorObstaculos(int colorObstaculos) {
-    this.colorObstaculos = colorObstaculos;
   }
 }

@@ -56,7 +56,7 @@ void setup() {
 
   cambiarColores(fondo);
  
-  escenario = new Escenario(this, height - 100); // El piso está a 100 píxeles del fondo
+  escenario = new Escenario(this, height - 50); // El piso está a 100 píxeles del fondo
   sonic = new Player(width / 2, escenario.getFloorY() - 50, "sonic.gif", 50, 50, this);
   menu = new Menu(this, "MENU.gif", sonic, "Menú Parallax");
                                                                                             
