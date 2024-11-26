@@ -25,8 +25,8 @@ private class MaquinaDeEstados {
       case VICTORIA:
         mostrarVictoria();
         break;
-      case DERROTA:
-        mostrarDerrota();
+      case ENDGAME: // Nuevo caso para el estado ENDGAME
+        mostrarEndGame();
         break;
     }
   }
@@ -46,13 +46,18 @@ private class MaquinaDeEstados {
   }
 
   void mostrarPausa() {
-    p.fill(255, 150);
-    p.rect(0, 0, p.width, p.height); // Fondo semitransparente
+    p.loadPixels();
+    for (int i = 0; i < p.pixels.length; i++) {
+      color original = p.pixels[i];
+      float brillo = (red(original) + green(original) + blue(original)) / 3; // Escala de grises
+      p.pixels[i] = p.color(brillo, brillo, brillo, 150); // Tono semitransparente
+    }
+    p.updatePixels();
     p.fill(255);
     p.textAlign(PApplet.CENTER, PApplet.CENTER);
     p.textSize(32);
     p.text("PAUSA\nPresiona ESPACIO para continuar", p.width / 2, p.height / 2);
-  }
+}
 
   void mostrarVictoria() {
     p.fill(0, 255, 0);
@@ -61,7 +66,7 @@ private class MaquinaDeEstados {
     p.text("¡Felicidades, has ganado!\nPresiona ENTER para volver al menú", p.width / 2, p.height / 2);
   }
 
-  void mostrarDerrota() {
+  void mostrarEndGame() {
     p.fill(255, 0, 0);
     p.textAlign(PApplet.CENTER, PApplet.CENTER);
     p.textSize(32);

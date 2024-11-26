@@ -6,7 +6,7 @@ enum GameState {
   INICIO,    // Estado del juego en curso
   PAUSA,     // Estado de pausa
   VICTORIA,  // Estado de victoria
-  DERROTA    // Estado de derrota
+  ENDGAME    // Estado de derrota
 }
 
 private PImage fondo;
@@ -18,11 +18,11 @@ public PImage spriteSheet2;
 private HUD hud;
 private MaquinaDeEstados maquinaDeEstados;
 private Menu menu;
+private EndGame endGame; // Instancia de la clase EndGame
 private Collision collisionHandler;
 private Escenario escenario;
 private SpawnerEnemigos spawner; // Instancia del spawner
 private float deltaTime;  // Variable para almacenar el tiempo entre frames
-
 public boolean gameOver = false;
 
 // Colores
@@ -30,7 +30,6 @@ private color color1Original = #771177;
 private color color2Original = #993399;
 private color color3Original = #dd77dd;
 private color color4Original = #bb55bb;
-
 private color color1Nuevo = #b4d6f0;
 private color color2Nuevo = #0092ff;
 private color color3Nuevo = #ffffff;
@@ -42,7 +41,8 @@ public void setup() {
 
   // Maquina de estados
   maquinaDeEstados = new MaquinaDeEstados(this);
-  
+  endGame = new EndGame(this);
+
   parallax = new Parallax(fondo, 0.5, 1.8, -100, -310);
   hud = new HUD(3, 60);
   
@@ -65,7 +65,7 @@ public void draw() {
   background(0);
 
   // Mostrar Parallax en MENU e INICIO
-  if (maquinaDeEstados.estadoActual == GameState.MENU || maquinaDeEstados.estadoActual == GameState.INICIO) {
+  if (maquinaDeEstados.estadoActual == GameState.MENU || maquinaDeEstados.estadoActual == GameState.INICIO || maquinaDeEstados.estadoActual == GameState.PAUSA) {
     parallax.update();
     parallax.display();
   }
@@ -81,37 +81,41 @@ public void draw() {
       escenario.mostrar();
       escenario.verificarColision(sonic);
 
-      // Control del jugador
+      // Movimiento del jugador
       float dx = 0, dy = 0;
       if (keyPressed) {
         if (keyCode == LEFT) dx = -5;
         if (keyCode == RIGHT) dx = 5;
-        if (keyCode == UP && sonic.getPosicion().y >= escenario.getFloorY() - sonic.alto) dy = -20; // Salto simple
+        if (keyCode == UP && sonic.getPosicion().y >= escenario.getFloorY() - sonic.alto) dy = -20; // Salto
       }
       sonic.mover(dx, dy);
 
       // Gravedad
       if (sonic.getPosicion().y < escenario.getFloorY() - sonic.alto) {
-        sonic.mover(0, 0.5); // Gravedad
+        sonic.mover(0, 0.5);
       }
       sonic.mostrar();
 
+<<<<<<< Updated upstream
      // Generar enemigos periódicamente
       spawner.actualizarEnemigos(deltaTime); // Pasar deltaTime a actualizarEnemigos
+=======
+      // Actualizar enemigos y verificar colisiones
+      spawner.spawnEnemigo();
+      spawner.actualizarEnemigos(deltaTime);
+      for (EnemigosBase enemigo : spawner.enemigos) {
+        collisionHandler.handleCollision(sonic, enemigo, hud);
+      }
+>>>>>>> Stashed changes
 
-    // Dentro del case INICIO:
-    for (EnemigosBase enemigo : spawner.enemigos) {
-      collisionHandler.handleCollision(sonic, enemigo, hud);  // Verifica la colisión
-  }
+      // Mostrar HUD
+      hud.mostrar();
 
-    // Mostrar HUD
-    hud.mostrar();
-
-    // Verificar condiciones de victoria o derrota
-    if (hud.tiempoTerminado()) {
-      maquinaDeEstados.cambiarEstado(GameState.DERROTA);
-    }
-    break;
+      // Verificar condiciones de victoria o derrota
+      if (hud.tiempoTerminado()) {
+        maquinaDeEstados.cambiarEstado(GameState.ENDGAME);
+      }
+      break;
 
     case PAUSA:
       fill(255, 150);
@@ -129,11 +133,8 @@ public void draw() {
       text("¡Felicidades, has ganado!\nPresiona ENTER para volver al menú", width / 2, height / 2);
       break;
 
-    case DERROTA:
-      fill(255, 0, 0);
-      textAlign(CENTER, CENTER);
-      textSize(32);
-      text("GAME OVER\nPresiona ENTER para volver al menú", width / 2, height / 2);
+    case ENDGAME:
+      endGame.display(); // Mostrar pantalla de Game Over
       break;
   }
 }
@@ -176,18 +177,21 @@ public void keyPressed() {
         maquinaDeEstados.cambiarEstado(GameState.INICIO);
       }
       break;
+
     case INICIO:
-      if (key == ' ') {
+      if (key == ' ') { // Activar pausa
         maquinaDeEstados.cambiarEstado(GameState.PAUSA);
       }
       break;
+
     case PAUSA:
-      if (key == ' ') {
+      if (key == ' ') { // Salir de la pausa
         maquinaDeEstados.cambiarEstado(GameState.INICIO);
       }
       break;
+
     case VICTORIA:
-    case DERROTA:
+    case ENDGAME:
       if (key == ENTER) {
         maquinaDeEstados.cambiarEstado(GameState.MENU);
       }

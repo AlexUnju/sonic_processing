@@ -1,7 +1,4 @@
 private class Collision {
-  // Constructor vacío, ya que no necesitamos inicializar nada al crear un objeto Collision
-  Collision() {}
-
   // Verifica si dos rectángulos se están superponiendo (colisión)
   boolean checkCollision(PVector pos1, float width1, float height1, PVector pos2, float width2, float height2) {
     return pos1.x < pos2.x + width2 &&
