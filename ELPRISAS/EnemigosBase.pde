@@ -1,17 +1,17 @@
 abstract class EnemigosBase {
   protected PImage spriteSheet; // Imagen completa de los sprites
-  private PImage[] movimiento; // Sprites de movimiento
-  private PImage[] estatico;   // Sprites estáticos
-  private PImage[] explosion;  // Sprites de explosión
-  private int currentFrame;    // Frame actual
+  protected PImage[] movimiento; // Sprites de movimiento
+  protected PImage[] estatico;   // Sprites estáticos
+  protected PImage[] explosion;  // Sprites de explosión
+  protected int currentFrame;    // Frame actual
   protected float x, y;          // Posición
-  private float width, height; // Tamaño de los sprites
+  protected float width, height; // Tamaño de los sprites
   protected int vida;            // Vida del enemigo
   protected int daño;            // Daño al jugador
   private int estado;          // 0: Movimiento, 1: Estático, 2: Explosión
   private int frameDelay;      // Velocidad de animación
   private int frameCounter;    // Contador para control de frames
-  private boolean eliminado;   // Indica si el enemigo debe eliminarse
+  protected boolean eliminado;   // Indica si el enemigo debe eliminarse
 
   // Constructor común para todos los enemigos
   EnemigosBase(PImage spriteSheet, float x, float y, int vida, int daño) {
