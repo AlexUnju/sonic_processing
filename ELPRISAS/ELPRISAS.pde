@@ -8,16 +8,17 @@ enum GameState {
   VICTORIA,  // Estado de victoria
   DERROTA    // Estado de derrota
 }
+SpawnerEnemigos spawner; // Instancia del spawner
 
 PImage fondo;
 Parallax parallax;
 SoundFile music;
 Player sonic;
 MaquinaDeEstados maquinaDeEstados;
-PImage spriteSheet;
-Enemigo enemigo;
+PImage spriteSheet; // Imagen de los sprites de los enemigos
+
 PImage spriteSheet2;
-Enemies2 enemigo2;
+
 HUD hud;
 Collision collisionHandler;
 Menu menu;
@@ -35,6 +36,8 @@ color color1Nuevo = #b4d6f0;
 color color2Nuevo = #0092ff;
 color color3Nuevo = #ffffff;
 color color4Nuevo = #0090fc;
+
+float deltaTime;  // Variable para almacenar el tiempo entre frames
 
 void setup() {
   size(800, 500);
@@ -57,11 +60,8 @@ void setup() {
   sonic = new Player(width / 2, escenario.getFloorY() - 50, "sonic.gif", 50, 50, this);
   menu = new Menu(this, "MENU.gif", sonic, "Menú Parallax");
                                                                                             
-  spriteSheet = loadImage("buzzer.png");
-  enemigo = new Enemigo(spriteSheet, 300, 300, 100, 10);
-  
-  spriteSheet2 = loadImage("buzzer.png");
-  enemigo2 = new Enemies2(spriteSheet2, 300, 300, 120, 15);
+    spriteSheet = loadImage("buzzer.png"); // Cargar sprite sheet
+    spawner = new SpawnerEnemigos(spriteSheet);
 }
 
 void draw() {
@@ -72,6 +72,8 @@ void draw() {
     parallax.update();
     parallax.display();
   }
+ // Calcular el deltaTime (tiempo entre cuadros)
+  deltaTime = millis() / 1000.0; // Dividir entre 1000 para convertir milisegundos a segundos
 
   // Manejo de estados del juego
   switch (maquinaDeEstados.estadoActual) {
@@ -98,19 +100,15 @@ void draw() {
       }
       sonic.mostrar();
 
-      // Mostrar enemigos y manejar colisiones
-      if (!enemigo.isEliminado()) {
-        enemigo.mostrar();
-        enemigo.mover(-1, 0);
-        collisionHandler.handleCollision(sonic, enemigo, hud);
-      }
+    spawner.spawnEnemigo(); // Generar enemigos periódicamente
+   spawner.actualizarEnemigos(deltaTime); // Pasar deltaTime a actualizarEnemigos
 
-      if (!enemigo2.isEliminado()) {
-        enemigo2.mostrar();
-        enemigo2.mover(-3, 0);
-        collisionHandler.handleCollision(sonic, enemigo2, hud);
-      }
+    // Dentro del case INICIO:
+for (EnemigosBase enemigo : spawner.enemigos) {
+  collisionHandler.handleCollision(sonic, enemigo, hud);  // Verifica la colisión
+}
 
+   
       // Mostrar HUD
       hud.mostrar();
 

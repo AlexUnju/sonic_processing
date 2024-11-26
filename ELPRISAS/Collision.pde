@@ -10,8 +10,8 @@ class Collision {
            pos1.y + height1 > pos2.y;
   }
 
-  // Manejo de la colisión entre Sonic y el Enemigo
-  void handleCollision(Player player, Enemigo enemigo, HUD hud) {
+  // Manejo de la colisión entre Sonic y cualquier enemigo (hereda de EnemigosBase)
+  void handleCollision(Player player, EnemigosBase enemigo, HUD hud) {
     PVector playerPos = player.getPosicion();
     float playerWidth = player.ancho;
     float playerHeight = player.alto;
@@ -23,38 +23,13 @@ class Collision {
     if (checkCollision(playerPos, playerWidth, playerHeight, enemigoPos, enemigoWidth, enemigoHeight)) {
       if (playerPos.y < escenario.getFloorY() - playerHeight) {
         // Sonic está en el aire, destruir enemigo
-         enemigo.estado = 2; // Cambia al estado de explosión
-         enemigo.currentFrame = 0; // Reinicia la animación de explosión
-         hud.añadirPuntos(10); // Suma 10 puntos
-
-    } else {
-      // Sonic no está en el aire, pierde vida
-      hud.modificarVidas(-1);
-    }
-  }
-}
-
-  // Sobrecarga para manejar la colisión con el Enemigo 2
-  void handleCollision(Player player, Enemies2 enemigo2, HUD hud) {
-    PVector playerPos = player.getPosicion();
-    float playerWidth = player.ancho;
-    float playerHeight = player.alto;
-
-    PVector enemigoPos = new PVector(enemigo2.x, enemigo2.y);
-    float enemigoWidth = enemigo2.width;
-    float enemigoHeight = enemigo2.height;
-
-    if (checkCollision(playerPos, playerWidth, playerHeight, enemigoPos, enemigoWidth, enemigoHeight)) {
-      if (playerPos.y < escenario.getFloorY() - playerHeight) {
-        // Sonic está en el aire, destruir enemigo
-        enemigo2.estado = 2; // Cambia al estado de explosión
-        enemigo2.currentFrame = 0; // Reinicia la animación de explosión
+        enemigo.estado = 2; // Cambia al estado de explosión
+        enemigo.currentFrame = 0; // Reinicia la animación de explosión
         hud.añadirPuntos(10); // Suma 10 puntos
-
-    } else {
-      // Sonic no está en el aire, pierde vida
-      hud.modificarVidas(-1);
+      } else {
+        // Sonic no está en el aire, pierde vida
+        hud.modificarVidas(-1);
+      }
     }
   }
-}
 }
