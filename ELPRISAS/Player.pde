@@ -1,40 +1,39 @@
 // Clase Player
 class Player {
-  // Atributos para posición y movimiento
-  private PVector position;
-  private float yVel = 0;
-  private float xVel = 0;
-  private float gravity = 0.8;
-  private float jumpStrength = -15;
-  private float speed = 1;
-  private float maxSpeed = 5;
-  private float friction = 0.95;
-  private boolean jumping = false;
-  private float animationSpeed = 1.0; // Velocidad de animación
+// Atributos para posición y movimiento
+private PVector position;    // Almacena la posición del jugador en el espacio 2D.
+private float yVel = 0;      // Velocidad en el eje Y (usada para el salto y la gravedad).
+private float xVel = 0;      // Velocidad en el eje X (usada para el movimiento).
+private float gravity = 0.8; // Aceleración de la gravedad.
+private float jumpStrength = -15; // Fuerza del salto (el valor negativo lo hace hacia arriba).
+private float speed = 2;     // Velocidad de movimiento horizontal del jugador.
+private float maxSpeed = 5;  // Velocidad máxima que el jugador puede alcanzar.
+private float friction = 0.8; // Fricción, reduce la velocidad al mover.
+private boolean jumping = false; // Determina si el jugador está en el aire.
+private float animationSpeed = 3.0; // Controla la velocidad de la animación.
 
-  // Atributos para la animación
-  private float frame = 0;
-  private int cols = 6;
-  private int rows = 4;
-  private int spriteWidth, spriteHeight;
-  private boolean facingLeft = false;
-  private boolean isAnimating = false;
+private float frame = 0;     // Controla el frame actual para la animación.
+private int cols = 6;        // Número de columnas en el sprite (cuántos frames por fila).
+private int rows = 4;        // Número de filas en el sprite (cuántas animaciones hay).
+private int spriteWidth, spriteHeight; // Dimensiones del sprite.
 
-  // Estado actual del jugador
-  private String state = "Idle";
+private boolean facingLeft = false; // Indica si el jugador está mirando hacia la izquierda.
+private boolean isAnimating = false; // Si se está animando o no.
 
-  // Temporizadores y umbrales
-  private int moveTimer = 0;
-  private int moveThreshold = 20;
-  private int jumpTimer = 0;
-  private int jumpDelay = 10;
-  
-  // Atributo en la clase Player
-  private ArrayList<PVector> trajectory = new ArrayList<PVector>();
-  private boolean showHitbox = false;
-  private boolean showTrajectory = false;
+private String state = "Idle"; // Estado actual del jugador (Idle, Running, Jumping, etc.)
 
-  private int vidas;
+// Temporizadores y umbrales
+private int moveTimer = 0;   // Temporizador para manejar el movimiento.
+private int moveThreshold = 20; // Umbral para actualizar el movimiento.
+
+private int jumpTimer = 0;   // Temporizador para el salto.
+private int jumpDelay = 5;   // Retraso para controlar la rapidez del salto.
+
+private ArrayList<PVector> trajectory = new ArrayList<PVector>(); // Trayectoria del jugador para mostrar.
+private boolean showHitbox = false;  // Si se debe mostrar la caja de colisión del jugador.
+private boolean showTrajectory = false; // Si se debe mostrar la trayectoria del jugador.
+
+private int vidas; // Número de vidas del jugador.
 
 
   /**
@@ -51,48 +50,48 @@ class Player {
   /**
    * Mueve al jugador en la dirección especificada.
    */
-  public void move(int dir) {
-    if (!jumping) {
-      if (state.equals("Running")) {
-        xVel += dir * speed;
-        xVel = constrain(xVel, -maxSpeed, maxSpeed);
-      } else {
-        xVel = dir * speed;
-      }
-      facingLeft = dir < 0;
-      state = dir < 0 ? "Moving Left" : "Moving Right";
-      frame = (frame + animationSpeed) % cols;
+public void move(int dir) {
+    if (!jumping) { // Si el jugador no está saltando.
+        if (state.equals("Running")) { // Si el estado es "Running" (corriendo).
+            xVel += dir * speed;  // Incrementa o decrementa la velocidad horizontal en función de la dirección.
+            xVel = constrain(xVel, -maxSpeed, maxSpeed); // Limita la velocidad máxima.
+        } else {
+            xVel = dir * speed;  // Si no está corriendo, simplemente asigna la velocidad en la dirección.
+        }
+        facingLeft = dir < 0; // Si la dirección es negativa (izquierda), el jugador está mirando a la izquierda.
+        state = dir < 0 ? "Moving Left" : "Moving Right"; // Cambia el estado según la dirección.
+        frame = (frame + animationSpeed) % cols; // Actualiza el frame de la animación.
 
-      if (moveTimer < moveThreshold) {
-        moveTimer++;
-      }
+        if (moveTimer < moveThreshold) { // Controla el tiempo de movimiento.
+            moveTimer++;
+        }
     }
-  }
+}
 
   /**
    * Detiene el movimiento del jugador.
    */
-  public void stop() {
+public void stop() {
     if (state.equals("Running")) {
-      state = "Inertia";
+        state = "Inertia"; // Cambia el estado a "Inertia" cuando deja de correr.
     } else {
-      state = "Idle";
-      xVel = 0;
+        state = "Idle"; // Si no está corriendo, cambia a "Idle".
+        xVel = 0; // Detiene el movimiento horizontal.
     }
-    frame = 0;
-    moveTimer = 0;
-  }
+    frame = 0; // Reinicia la animación.
+    moveTimer = 0; // Reinicia el temporizador de movimiento.
+}
 
   /**
    * Hace que el jugador salte.
    */
   public void jump() {
-    if (!jumping) {
-      yVel = jumpStrength;
-      jumping = true;
-      state = "Jumping";
-      frame = 0;
-      jumpTimer = 0;
+    if (!jumping) {  // Si el jugador no está saltando.
+        yVel = jumpStrength; // Aplica la fuerza del salto en el eje Y.
+        jumping = true; // Marca que el jugador está saltando.
+        state = "Jumping"; // Cambia el estado a "Jumping".
+        frame = 0; // Reinicia la animación.
+        jumpTimer = 0; // Reinicia el temporizador del salto.
     }
   }
 
@@ -179,7 +178,7 @@ public void update() {
     isAnimating = false;
     frame = 0; // Mantener el frame en 0 para el estado Idle
   } else {
-    animationSpeed = 0.2;
+    animationSpeed = 0.5;
     isAnimating = true;
   }
 
