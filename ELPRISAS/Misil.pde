@@ -24,6 +24,13 @@ class Misil {
       float newHeight = image.height * scale;
       image(image, x - newWidth / 2, y, newWidth, newHeight);  // Centra el misil horizontalmente
     }
+
+    // Primitiva que rodea al misil (Rectángulo)
+    float newWidth = image.width * scale;
+    float newHeight = image.height * scale;
+    noFill();  // No rellenar el rectángulo
+    stroke(255, 0, 0);  // Color rojo para el contorno
+    rect(x - newWidth / 2, y, newWidth, newHeight);  // Dibuja el rectángulo alrededor del misil
   }
 
   public float getX() {
