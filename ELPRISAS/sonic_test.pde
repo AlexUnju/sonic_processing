@@ -50,7 +50,7 @@ void setup() {
 
   sonic = new Player(100, height - spriteHeight, spriteWidth, spriteHeight);
   
-  boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 4, 0.25, sonic);
+  boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 5, 0.25, sonic);
 
   // Crear la máquina de estados
   maquinaDeEstado = new MaquinaDeEstado(menu);
