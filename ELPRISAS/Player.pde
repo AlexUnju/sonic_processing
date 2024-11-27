@@ -85,15 +85,16 @@ public void stop() {
   /**
    * Hace que el jugador salte.
    */
-  public void jump() {
-    if (!jumping) {  // Si el jugador no está saltando.
-        yVel = jumpStrength; // Aplica la fuerza del salto en el eje Y.
-        jumping = true; // Marca que el jugador está saltando.
-        state = "Jumping"; // Cambia el estado a "Jumping".
-        frame = 0; // Reinicia la animación.
-        jumpTimer = 0; // Reinicia el temporizador del salto.
-    }
+public void jump() {
+  if (!jumping) {  // Si el jugador no está saltando.
+    yVel = jumpStrength; // Aplica la fuerza del salto en el eje Y.
+    jumping = true; // Marca que el jugador está saltando.
+    state = "Jumping"; // Cambia el estado a "Jumping".
+    frame = 0; // Reinicia la animación.
+    jumpTimer = 0; // Reinicia el temporizador del salto.
+    jumpSound.play();  // Reproduce el sonido de salto
   }
+}
 
   /**
    * Actualiza el estado y la posición del jugador.

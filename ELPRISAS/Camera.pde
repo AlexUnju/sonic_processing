@@ -11,8 +11,6 @@ class Camera {
   public void follow(Player target) {
     x = -target.getX() + width / 2;
     y = -target.getY() + height / 2 + offsetY;  // Aplica el desfase vertical
-    
-
   }
   
   public void apply() {
