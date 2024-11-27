@@ -14,6 +14,7 @@ private int spriteHeight = 184 / 4; // Alto de un sprite (4 filas)
 private Player sonic;  // Instancia del jugador
 private Camera camera; // Instancia de la cámara
 private PImage endGameImage;
+private Boss boss;
 
 //HUD
 private HUD hud;
@@ -30,7 +31,6 @@ void setup() {
   
   // Cargar el spriteSheet de Sonic
   spriteSheet = loadImage("sonic/sonic-10.png");
-
   // Crear objeto Parallax
   parallax = new Parallax(fondoArchivos, 1, 1.5, 0, -150, 16);
   
@@ -42,6 +42,8 @@ void setup() {
   menu = new Menu(40, 150, 100, pixelFont);
 
   sonic = new Player(100, height - spriteHeight, spriteWidth, spriteHeight);
+  
+  boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 4, 0.25, sonic);
 
   // Crear la máquina de estados
   maquinaDeEstado = new MaquinaDeEstado(menu);
@@ -97,7 +99,10 @@ void draw() {
     sonic.update();  // Actualiza el estado y la posición del jugador
     sonic.display();  // Muestra al jugador en la pantalla
     
-
+    // Dibujar al jefe
+    boss.update();
+    boss.display();
+    
     // Dibujar el suelo (solo visual, no interactúa con la lógica de colisiones)
     stroke(0);
     line(-width, height, width * 2, height);
@@ -124,13 +129,12 @@ void keyPressed() {
   if (key == 'q') debug.toggleDebug(sonic);  // Alternar la depuración
   // Simulación de recoger una vida extra
   if (key == 'r') { // Presiona 'r' para ganar una vida
-  sonic.ganarVida();
+    sonic.ganarVida();
   }
   // Cambiar a estado END_GAME con 'L'
   if (key == 'l' || key == 'L') {
     maquinaDeEstado.setEstado(MaquinaDeEstado.ENDGAME);
   }
-  
   // Salir del juego al presionar ESC en estado END_GAME
   if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ENDGAME && key == ESC) {
     exit();
