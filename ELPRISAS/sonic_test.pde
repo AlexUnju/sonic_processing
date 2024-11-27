@@ -6,10 +6,6 @@ private MaquinaDeEstado maquinaDeEstado;
 private SoundFile startMenuSound;  // Variable para el sonido
 private Parallax parallax;
 
-//imagen end game
-private PImage endGameImage;
-
-
 // Variables para el jugador
 private PImage spriteSheet;
 private int spriteWidth = 252 / 6;  // Ancho de un sprite (6 columnas)
@@ -69,9 +65,6 @@ void setup() {
   // Establecer una posición manual del escenario
   escenario.setPosicionX(100);  // Desplaza el fondo 100 píxeles a la derecha
   escenario.setPosicionY(55);   // Desplaza el fondo 50 píxeles hacia abajo
-  
-  // Cargar la imagen de fin de juego
-  endGameImage = loadImage("endgame.png");
 }
 
 void draw() {
@@ -121,15 +114,7 @@ void keyPressed() {
   if (key == ENTER) startMenuSound.stop(); // Detener la música si se presiona ENTER
   // Simulación de recoger una vida extra
   if (key == 'r') { // Presiona 'r' para ganar una vida
-    sonic.ganarVida();
-  }
-  // Terminar el juego al presionar 'L'
-  if (key == 'l' || key == 'L') {
-    maquinaDeEstado.setEstado(MaquinaDeEstado.ENDGAME);
-  }
-  // Salir del juego al presionar ESC en estado END_GAME
-  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ENDGAME && key == ESC) {
-    exit();
+  sonic.ganarVida();
   }
 }
 
