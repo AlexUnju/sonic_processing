@@ -27,7 +27,7 @@ void setup() {
   spriteSheet = loadImage("sonic/sonic-10.png");
 
   // Crear objeto Parallax
-  parallax = new Parallax(fondoArchivos, 1, 1.5, 0, -150, 16);
+  parallax = new Parallax(fondoArchivos, 1, 1.5, 0, -150, 30);
 
   // Cargar la fuente y crear el menú
   PFont pixelFont = createFont("Font/NiseSegaSonic.ttf", 32);
