@@ -6,6 +6,8 @@ class MaquinaDeEstado {
   public static final int ESPERA = 1;     // Campo estático
   public static final int TRANSICION = 2; // Campo estático
   public static final int ESCENARIO = 3;  // Campo estático
+  public static final int ENDGAME = 4;  // Campo estático
+
 
   private int estado = INICIO;
   private int textAlpha = 255;
@@ -86,6 +88,20 @@ class MaquinaDeEstado {
 
         // Ya no es necesario dibujar a Sonic aquí, ya lo haces en el 'sketch'
         break;
+      case ENDGAME:
+        // Mostrar imagen de fin de juego
+        background(0); // Fondo negro para mayor contraste
+        if (endGameImage != null) {
+          imageMode(CENTER);
+          image(endGameImage, width / 2, height / 2 - 50);
+        }
+
+        // Mostrar el texto
+        textAlign(CENTER, CENTER);
+        fill(255);
+        textSize(20);
+        text("Pulsa ESC para salir", width / 2, height / 2 + 150);
+        break;
     }
   }
 
@@ -95,6 +111,10 @@ class MaquinaDeEstado {
       textAlpha = 255;
       parallax.setMovimientoManual(false);  // Desactivar movimiento automático al pasar a la transición
     }
+  }
+  
+  public void setEstado(int nuevoEstado) {
+    estado = nuevoEstado;
   }
 
   // Getter para obtener el estado actual

@@ -12,6 +12,7 @@ private int spriteWidth = 252 / 6;  // Ancho de un sprite (6 columnas)
 private int spriteHeight = 184 / 4; // Alto de un sprite (4 filas)
 private Player sonic;  // Instancia del jugador
 private Camera camera; // Instancia de la cámara
+private PImage endGameImage;
 
 //HUD
 private HUD hud;
@@ -31,6 +32,9 @@ void setup() {
 
   // Crear objeto Parallax
   parallax = new Parallax(fondoArchivos, 1, 1.5, 0, -150, 16);
+  
+  // Cargar la imagen de fin de juego
+  endGameImage = loadImage("endgame.png");
 
   // Cargar la fuente y crear el menú
   PFont pixelFont = createFont("Font/NiseSegaSonic.ttf", 32);
@@ -115,6 +119,15 @@ void keyPressed() {
   // Simulación de recoger una vida extra
   if (key == 'r') { // Presiona 'r' para ganar una vida
   sonic.ganarVida();
+  }
+  // Cambiar a estado END_GAME con 'L'
+  if (key == 'l' || key == 'L') {
+    maquinaDeEstado.setEstado(MaquinaDeEstado.ENDGAME);
+  }
+  
+  // Salir del juego al presionar ESC en estado END_GAME
+  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ENDGAME && key == ESC) {
+    exit();
   }
 }
 
