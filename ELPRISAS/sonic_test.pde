@@ -22,13 +22,20 @@ private HUD hud;
 // Instancia de la clase Escenario
 private Escenario escenario;
 
+private SoundFile jumpSound;  // Variable para el sonido del salto
+
+
 // Debug
 private Debug debug;
+
+private SoundFile gameoverSound;  // Variable para el sonido del Game Over
+private boolean gameoverSoundPlayed = false;  // Flag para saber si se ha reproducido el Game Over
 
 void setup() {
   size(800, 600);  // Tamaño de la ventana
   String[] fondoArchivos = {"fondo/fondo0.png", "fondo/fondo1.png", "fondo/fondo2.png"};
-  
+  jumpSound = new SoundFile(this, "data/sound/jump.wav");
+
   // Cargar el spriteSheet de Sonic
   spriteSheet = loadImage("sonic/sonic-10.png");
   // Crear objeto Parallax
@@ -53,6 +60,9 @@ void setup() {
   startMenuSound.loop();  // Reproduce el sonido en bucle
   
   gameMusic = new SoundFile(this, "data/sound/Sonic_The_Hedgehog.mp3");
+
+  // Cargar sonido de Game Over
+  gameoverSound = new SoundFile(this, "data/sound/gameover.mp3");
 
   // Crear la cámara
   camera = new Camera();
@@ -82,7 +92,6 @@ void draw() {
   // Dibujar el parallax siempre
   parallax.dibujar();
 
-
   // Hacer que la cámara siga a Sonic
   camera.follow(sonic);
   // Aplicar la transformación de la cámara
@@ -95,6 +104,7 @@ void draw() {
       startMenuSound.stop();  // Detener música del menú
       gameMusic.loop();       // Reproducir música del juego en bucle
     }
+
     escenario.dibujar();
     sonic.update();  // Actualiza el estado y la posición del jugador
     sonic.display();  // Muestra al jugador en la pantalla
@@ -106,6 +116,18 @@ void draw() {
     // Dibujar el suelo (solo visual, no interactúa con la lógica de colisiones)
     stroke(0);
     line(-width, height, width * 2, height);
+  }
+
+  // Verificar si estamos en el estado ENDGAME
+  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ENDGAME) {
+    if (!gameoverSoundPlayed) {
+      gameMusic.stop();  // Detener la música de fondo del juego
+      gameoverSound.play();  // Reproducir sonido de Game Over
+      gameoverSoundPlayed = true;  // Marcar como reproducido
+    }
+
+    // Aquí puedes mostrar la pantalla de fin de juego
+    image(endGameImage, 0, 0);
   }
 
   popMatrix();  // Vuelve a la matriz original para no afectar el resto
@@ -121,6 +143,7 @@ void draw() {
   debug.display(sonic, camera);  // Este método ahora maneja la depuración visual para Sonic y la cámara
 }
 
+
 void keyPressed() {
   maquinaDeEstado.keyPressed(key);  // Maneja la tecla presionada
   if (key == 'a') sonic.move(-1);   // Mover a la izquierda
@@ -131,10 +154,12 @@ void keyPressed() {
   if (key == 'r') { // Presiona 'r' para ganar una vida
     sonic.ganarVida();
   }
-  // Cambiar a estado END_GAME con 'L'
-  if (key == 'l' || key == 'L') {
+  
+// Cambiar al estado ENDGAME al presionar 'l' o 'L' en estado ESCENARIO
+  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ESCENARIO && (key == 'l' || key == 'L')) {
     maquinaDeEstado.setEstado(MaquinaDeEstado.ENDGAME);
   }
+
   // Salir del juego al presionar ESC en estado END_GAME
   if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ENDGAME && key == ESC) {
     exit();
