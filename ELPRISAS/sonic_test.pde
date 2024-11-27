@@ -13,6 +13,9 @@ private int spriteHeight = 184 / 4; // Alto de un sprite (4 filas)
 private Player sonic;  // Instancia del jugador
 private Camera camera; // Instancia de la cámara
 
+//HUD
+private HUD hud;
+
 // Instancia de la clase Escenario
 private Escenario escenario;
 
@@ -54,6 +57,9 @@ void setup() {
   // Establecer las posiciones manuales de los rectángulos
   debug.setSpriteRectPosition(570, 25);  // Ajusta la posición del rectángulo rojo
   
+  //HUD
+  hud = new HUD(sonic);
+  
   // Crear una instancia de la clase Escenario
   escenario = new Escenario("escenario/scene0.png");  // Cargar la imagen del fondo
   // Establecer una posición manual del escenario
@@ -87,7 +93,11 @@ void draw() {
   }
 
   popMatrix();  // Vuelve a la matriz original para no afectar el resto
-
+  
+  //HUD
+   // Dibujar HUD
+  hud.display();
+  
   // Actualizar la máquina de estados (esta controla qué se dibuja)
   maquinaDeEstado.update();
   
@@ -100,8 +110,12 @@ void keyPressed() {
   if (key == 'a') sonic.move(-1);   // Mover a la izquierda
   if (key == 'd') sonic.move(1);    // Mover a la derecha
   if (key == ' ') sonic.jump();     // Salto
-if (key == 'q') debug.toggleDebug(sonic);  // Alternar la depuración
+  if (key == 'q') debug.toggleDebug(sonic);  // Alternar la depuración
   if (key == ENTER) startMenuSound.stop(); // Detener la música si se presiona ENTER
+  // Simulación de recoger una vida extra
+  if (key == 'r') { // Presiona 'r' para ganar una vida
+  sonic.ganarVida();
+  }
 }
 
 void keyReleased() {

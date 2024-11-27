@@ -34,6 +34,7 @@ class Player {
   private boolean showHitbox = false;
   private boolean showTrajectory = false;
 
+  private int vidas;
 
 
   /**
@@ -43,6 +44,8 @@ class Player {
     this.position = new PVector(x, y);
     this.spriteWidth = w;
     this.spriteHeight = h;
+    this.vidas = 3; // Sonic comienza con 3 vidas
+
   }
 
   /**
@@ -347,5 +350,25 @@ public void drawTrajectory() {
         default: // Idle
             return 0;
     }
-}
+  }
+// Métodos para manejar vidas
+  public int getVidas() {
+    return vidas;
+  }
+
+  public void perderVida() {
+    if (vidas > 0) {
+      vidas--;
+    }
+  }
+
+  public void ganarVida() {
+    if (vidas < 3) {
+      vidas++;
+    }
+  }
+
+  public boolean estaVivo() {
+    return vidas > 0;
+  }
 }
