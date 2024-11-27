@@ -1,75 +1,104 @@
-private class MaquinaDeEstados {
-  PApplet p;
-  GameState estadoActual;
+class MaquinaDeEstado {
+  private Menu menu;
+  private Escenario escenario;
 
-  MaquinaDeEstados(PApplet parent) {
-    this.p = parent;
-    this.estadoActual = GameState.MENU;
+  public static final int INICIO = 0;     // Campo estático
+  public static final int ESPERA = 1;     // Campo estático
+  public static final int TRANSICION = 2; // Campo estático
+  public static final int ESCENARIO = 3;  // Campo estático
+
+  private int estado = INICIO;
+  private int textAlpha = 255;
+  private boolean fadeOut = true;
+  private boolean animacionFinalizada = false;
+
+  public MaquinaDeEstado(Menu menu) {
+    this.menu = menu;
+    this.escenario = new Escenario("escenario/scene0.png");
   }
 
-  void cambiarEstado(GameState nuevoEstado) {
-    this.estadoActual = nuevoEstado;
-  }
-
-  void display() {
-    switch (estadoActual) {
-      case MENU:
-        mostrarMenu();
-        break;
+  public void update() {
+    switch (estado) {
       case INICIO:
-        mostrarInicio();
+        if (menu.getCurrentFrame() < 12) {
+          if (frameCount % 5 == 0) {
+            menu.setCurrentFrame(menu.getCurrentFrame() + 1);
+          }
+        } else {
+          estado = ESPERA;
+        }
+        menu.drawMenu("", 255);  // No dibuja texto en INICIO
         break;
-      case PAUSA:
-        mostrarPausa();
+
+      case ESPERA:
+        // Cicla el menú y anima el texto
+        if (frameCount % 5 == 0) {
+          int current = menu.getCurrentFrame();
+          if (current < 12 || current >= 29) {
+            menu.setCurrentFrame(12);
+          } else {
+            menu.setCurrentFrame(current + 1);
+          }
+        }
+
+        if (frameCount % 5 == 0) {
+          if (fadeOut) {
+            textAlpha -= 15;
+            if (textAlpha <= 50) fadeOut = false;
+          } else {
+            textAlpha += 15;
+            if (textAlpha >= 255) fadeOut = true;
+          }
+        }
+
+        menu.drawMenu("Presiona ENTER para iniciar", textAlpha);
         break;
-      case VICTORIA:
-        mostrarVictoria();
+
+      case TRANSICION:
+        if (menu.getCurrentFrame() < 39) {
+          if (frameCount % 5 == 0) {
+            menu.setCurrentFrame(menu.getCurrentFrame() + 1);
+          }
+        } else {
+          animacionFinalizada = true;
+        }
+
+        if (textAlpha > 0) {
+          textAlpha -= 10;
+        }
+
+        menu.drawMenu("Iniciando juego...", textAlpha);
+
+        if (animacionFinalizada) {
+          estado = ESCENARIO;
+          animacionFinalizada = false;
+          // Reiniciar la posición del parallax al entrar al estado ESCENARIO
+          parallax.setMovimientoManual(true);  // Activar control manual
+          parallax.reiniciarPosicion();  // Método para reiniciar la posición del parallax
+        }
         break;
-      case ENDGAME: // Nuevo caso para el estado ENDGAME
-        mostrarEndGame();
+
+      case ESCENARIO:
+        // En el estado ESCENARIO, el movimiento es manual
+        parallax.setMovimientoManual(true);  // Activar control manual
+
+        // Ahora sí, dibuja el escenario en este estado
+
+        // Ya no es necesario dibujar a Sonic aquí, ya lo haces en el 'sketch'
         break;
     }
   }
 
-  void mostrarMenu() {
-    p.fill(255);
-    p.textAlign(PApplet.CENTER, PApplet.CENTER);
-    p.textSize(32);
-    p.text("Menú Principal\nPresiona ENTER para comenzar", p.width / 2, p.height / 2);
-  }
-
-  void mostrarInicio() {
-    p.fill(255);
-    p.textAlign(PApplet.LEFT, PApplet.TOP);
-    p.textSize(16);
-    p.text("Juego en curso...\nPresiona ESPACIO para pausar", 10, 10);
-  }
-
-  void mostrarPausa() {
-    p.loadPixels();
-    for (int i = 0; i < p.pixels.length; i++) {
-      color original = p.pixels[i];
-      float brillo = (red(original) + green(original) + blue(original)) / 3; // Escala de grises
-      p.pixels[i] = p.color(brillo, brillo, brillo, 150); // Tono semitransparente
+  public void keyPressed(char key) {
+    if (estado == ESPERA && key == ENTER) {
+      estado = TRANSICION;
+      textAlpha = 255;
+      parallax.setMovimientoManual(false);  // Desactivar movimiento automático al pasar a la transición
     }
-    p.updatePixels();
-    p.fill(255);
-    p.textAlign(PApplet.CENTER, PApplet.CENTER);
-    p.textSize(32);
-    p.text("PAUSA\nPresiona ESPACIO para continuar", p.width / 2, p.height / 2);
-}
-
-  void mostrarVictoria() {
-    p.fill(0, 255, 0);
-    p.textAlign(PApplet.CENTER, PApplet.CENTER);
-    p.textSize(32);
-    p.text("¡Felicidades, has ganado!\nPresiona ENTER para volver al menú", p.width / 2, p.height / 2);
   }
 
-  void mostrarEndGame() {
-    p.fill(255, 0, 0);
-    p.textAlign(PApplet.CENTER, PApplet.CENTER);
-    p.textSize(32);
-    p.text("GAME OVER\nPresiona ENTER para volver al menú", p.width / 2, p.height / 2);
+  // Getter para obtener el estado actual
+  public int getEstado() {
+    return estado;
   }
 }

@@ -1,96 +1,62 @@
-import processing.core.PImage;
+class Escenario {
+  private PImage escenario;   // Imagen única del fondo
+  private float offsetX = 0;  // Desplazamiento horizontal del fondo
+  private float velocidadFondo = 2.0; // Velocidad de desplazamiento del fondo
 
-private class Escenario {
-  private PApplet sketch;
-  private float floorY;
-  private ArrayList<Obstaculo> obstaculos;
-  private int colorObstaculos;
-  private PImage imagenFondo;
-  /**
-   * Constructor de la clase Escenario.
-   * @param sketch Referencia al PApplet principal.
-   * @param floorY Posición Y del piso.
-   */
-  public Escenario(PApplet sketch, float floorY) {
-    this.sketch = sketch;
-    this.floorY = floorY;
-    this.obstaculos = new ArrayList<Obstaculo>();
-    this.colorObstaculos = sketch.color(150, 75, 0);
-    
-    // Cargar la imagen del fondo
-    this.imagenFondo = sketch.loadImage("fondoescenario.png");
-    
-    inicializarObstaculos();
+  // Posición manual
+  private float posX = 0;  // Posición manual de la imagen en X
+  private float posY = 0;  // Posición manual de la imagen en Y
+
+  // Constructor
+  // Recibe la ruta de la imagen y el frameDelay (aunque solo usaremos la imagen)
+  public Escenario(String rutaFondo) {
+    this.escenario = loadImage(rutaFondo);  // Cargar solo una imagen
   }
 
-  private void inicializarObstaculos() {
-    obstaculos.add(new Obstaculo(300, floorY - 50, 50, 50));
-    obstaculos.add(new Obstaculo(500, floorY - 30, 30, 30));
-    obstaculos.add(new Obstaculo(700, floorY - 70, 70, 70));
-  }
+  // Método para actualizar y dibujar el escenario
+  public void dibujar() {
+    // Dibujar la imagen de fondo con desplazamiento
+    image(escenario, posX + offsetX, posY + height - escenario.height);
 
-  public void mostrar() {
-    // Dibujar primitivas (piso y obstáculos) primero
-    dibujarPiso();
-    dibujarObstaculos();
-    
-    // Luego dibujar la imagen del escenario por encima
-    dibujarFondo();
-  }
-
-  private void dibujarFondo() {
-    // Dibujar la imagen del fondo encima
-    sketch.image(imagenFondo, 0, 0, sketch.width, sketch.height);
-  }
-
-  private void dibujarPiso() {
-    sketch.fill(100, 200, 100);
-    sketch.rect(0, floorY, sketch.width, sketch.height - floorY);
-  }
-
-  private void dibujarObstaculos() {
-    sketch.fill(colorObstaculos);
-    for (Obstaculo obstaculo : obstaculos) {
-      sketch.rect(obstaculo.x, obstaculo.y, obstaculo.ancho, obstaculo.alto);
+    // Dibujar una segunda copia para un desplazamiento continuo
+    if (offsetX + escenario.width < width) {
+      image(escenario, posX + offsetX + escenario.width, posY + height - escenario.height);
     }
   }
 
-  public void verificarColision(Player jugador) {
-    if (jugador.getPosicion().y + jugador.alto > floorY) {
-      jugador.getPosicion().y = floorY - jugador.alto;
-    }
+  // Cambiar el desplazamiento horizontal de la imagen en función del movimiento
+  public void mover(float velocidad) {
+    offsetX -= velocidad * velocidadFondo;
 
-    for (Obstaculo obstaculo : obstaculos) {
-      if (obstaculo.colisionaCon(jugador)) {
-        jugador.getPosicion().x -= jugador.velocidad.x;
-        jugador.getPosicion().y -= jugador.velocidad.y;
-      }
+    // Reiniciar el desplazamiento cuando la imagen ha salido completamente de la pantalla
+    if (offsetX <= -escenario.width) {
+      offsetX = 0;
     }
   }
 
-  private class Obstaculo {
-    float x, y, ancho, alto;
-
-    Obstaculo(float x, float y, float ancho, float alto) {
-      this.x = x;
-      this.y = y;
-      this.ancho = ancho;
-      this.alto = alto;
-    }
-
-    boolean colisionaCon(Player jugador) {
-      return jugador.getPosicion().x < this.x + this.ancho &&
-             jugador.getPosicion().x + jugador.ancho > this.x &&
-             jugador.getPosicion().y < this.y + this.alto &&
-             jugador.getPosicion().y + jugador.alto > this.y;
-    }
+  // Métodos para establecer posiciones manuales de la imagen
+  public void setPosicionX(float x) {
+    posX = x;
   }
 
-  public float getFloorY() {
-    return floorY;
+  public void setPosicionY(float y) {
+    posY = y;
   }
 
-  public void setFloorY(float floorY) {
-    this.floorY = floorY;
+  // Getters y setters adicionales para el desplazamiento y la velocidad
+  public float getOffsetX() {
+    return offsetX;
+  }
+
+  public void setOffsetX(float offsetX) {
+    this.offsetX = offsetX;
+  }
+
+  public float getVelocidadFondo() {
+    return velocidadFondo;
+  }
+
+  public void setVelocidadFondo(float velocidadFondo) {
+    this.velocidadFondo = velocidadFondo;
   }
 }

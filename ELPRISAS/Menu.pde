@@ -1,88 +1,66 @@
-import gifAnimation.Gif;
-import processing.core.PApplet;
-import processing.core.PImage;
+/**
+ * Clase que maneja la carga y el dibujo de las imágenes del menú, junto con la animación y el texto.
+ */
+class Menu {
+  private PImage[] images;  // Array que contiene las imágenes del menú
+  private int totalImages;  // Número total de imágenes
+  private int currentFrame;  // Frame actual para la animación
+  private int x, y;  // Posición del menú en la pantalla
+  private PFont pixelFont;  // Fuente utilizada para el texto
 
-private class Menu {
-  // Variables privadas
-  private PApplet sketch;
-  private Gif gif;
-  private Player sonic;
-  private int menuHeight;
-  private String menuText;
   /**
-   * Constructor de la clase Menu.
-   * @param sketch Referencia al PApplet principal.
-   * @param gifPath Ruta del archivo GIF para el menú.
-   * @param sonic Referencia al objeto Player (Sonic).
-   * @param menuText Texto a mostrar en el menú.
+   * Constructor que inicializa el menú con un número de imágenes y una fuente específica.
    */
-  public Menu(PApplet sketch, String gifPath, Player sonic, String menuText) {
-    this.sketch = sketch;
-    this.sonic = sonic;
-    this.menuHeight = 100;
-    this.menuText = menuText;
-    
-    // Carga el GIF animado
-    this.gif = new Gif(sketch, gifPath);
-    this.gif.loop();
+  public Menu(int totalImages, int x, int y, PFont pixelFont) {
+    this.totalImages = totalImages;
+    this.x = x;
+    this.y = y;
+    this.currentFrame = 0;  // Inicializa el frame en 0
+    this.pixelFont = pixelFont;
+    this.images = new PImage[totalImages];
+    loadImages();  // Carga las imágenes del menú al inicializar
   }
 
   /**
-   * Muestra el menú en la pantalla.
+   * Carga las imágenes desde la carpeta "data/menu" y las almacena en el array de imágenes.
    */
-  public void display() {
-    drawMenuBackground();
-    drawMenuText();
-    drawGif();
-    controlAndDisplaySonic();
-  }
-
-  // Métodos privados para la lógica interna
-  private void drawMenuBackground() {
-    sketch.fill(255, 150);
-    sketch.noStroke();
-    sketch.rect(0, sketch.height - menuHeight, sketch.width, menuHeight);
-  }
-
-  private void drawMenuText() {
-    sketch.fill(255);
-    sketch.textSize(24);
-    sketch.textAlign(PApplet.CENTER, PApplet.CENTER);
-    sketch.text(menuText, sketch.width / 2, sketch.height - menuHeight / 2);
-  }
-
-  private void drawGif() {
-    if (gif != null) {
-      sketch.image(gif, sketch.width / 2 - gif.width / 2, sketch.height - 400 + 10);
+  private void loadImages() {
+    for (int i = 0; i < totalImages; i++) {
+      String imageName = "menu/menu" + nf(i, 2) + ".png";  // Formato de nombre para las imágenes
+      images[i] = loadImage(imageName);  // Carga cada imagen
     }
   }
 
-  private void controlAndDisplaySonic() {
-    float dx = 0, dy = 0;
-    if (sketch.keyPressed) {
-      if (sketch.keyCode == PApplet.UP) dy = -2;
-      if (sketch.keyCode == PApplet.DOWN) dy = 2;
-      if (sketch.keyCode == PApplet.LEFT) dx = -2;
-      if (sketch.keyCode == PApplet.RIGHT) dx = 2;
+  /**
+   * Establece el frame actual para la animación del menú.
+   */
+  public void setCurrentFrame(int frame) {
+    if (frame >= 0 && frame < totalImages) {
+      this.currentFrame = frame;  // Cambia al frame solicitado si está dentro del rango
     }
-    sonic.mover(dx, dy);
-    sonic.mostrar();
   }
 
-  // Getters y setters
-  public int getMenuHeight() {
-    return menuHeight;
+  /**
+   * Obtiene el frame actual de la animación.
+   */
+  public int getCurrentFrame() {
+    return this.currentFrame;  // Devuelve el frame actual
   }
 
-  public void setMenuHeight(int menuHeight) {
-    this.menuHeight = menuHeight;
-  }
+  /**
+   * Dibuja el menú en la pantalla con la imagen y el texto correspondiente.
+   */
+  public void drawMenu(String text, int alpha) {
+    // Dibuja la imagen correspondiente al frame actual
+    if (images[currentFrame] != null) {
+      image(images[currentFrame], x, y);  // Muestra la imagen en la posición especificada
+    }
 
-  public String getMenuText() {
-    return menuText;
-  }
-
-  public void setMenuText(String menuText) {
-    this.menuText = menuText;
+    // Dibuja el texto con animación de opacidad
+    textFont(pixelFont);
+    textSize(32);  // Tamaño del texto
+    fill(255, 255, 255, alpha);  // Opacidad controlada por el parámetro alpha
+    textAlign(CENTER, CENTER);  // Centra el texto
+    text(text, x + images[currentFrame].width / 2, y + 350);  // Dibuja el texto centrado
   }
 }
