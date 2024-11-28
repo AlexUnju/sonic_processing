@@ -8,7 +8,7 @@ class Abeja {
   public Abeja(float startX, float startY, float sonicX, float sonicY, String spritePath) {
     this.x = startX;
     this.y = startY;
-    this.velocidad = 2;  // Velocidad fija de la abeja
+    this.velocidad = 3;  // Velocidad fija de la abeja
     this.sprite = loadImage(spritePath);
 
     // Calcular dirección hacia Sonic
