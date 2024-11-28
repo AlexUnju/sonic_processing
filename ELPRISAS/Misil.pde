@@ -98,13 +98,17 @@ class Misil {
   }
 
 // Verificar colisión con el jugador
-// Verificar colisión con el jugador
 if (isCollidingWithPlayer(player)) {
     // Disminuir vidas del jugador
-    player.perderVida(maquinaDeEstado);  // Pasar la instancia correcta de MaquinaDeEstado
+    player.perderVida();  // Aquí no pasas la máquina de estados
+    // Cambiar al estado de fin de juego si el jugador pierde todas sus vidas
+    if (player.getVidas() <= 0) {
+        maquinaDeEstado.setEstado(MaquinaDeEstado.ENDGAME);  // Cambiar a ENDGAME directamente
+    }
     // Opcional: Destruir el misil o reiniciarlo
     this.destruir();  // Método que destruye o desactiva el misil
 }
+
 
 
 // Continuar con la lógica para el misil dependiendo si persigue a Sonic o no

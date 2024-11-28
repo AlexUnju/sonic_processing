@@ -365,18 +365,23 @@ public void drawTrajectory() {
   }
 
 // Método para manejar la pérdida de vida y notificar al sistema de estados
-public void perderVida(MaquinaDeEstado maquinaDeEstado) {
-    vidas--;  // Disminuir una vida
-    if (vidas <= 0) {
-        // Si las vidas llegan a 0, notificamos a la máquina de estados
+    public void perderVida(MaquinaDeEstado maquinaDeEstado) {
+        vidas--;  // Restar una vida
+        if (vidas <= 0) {
+            maquinaDeEstado.setEstado(MaquinaDeEstado.ENDGAME);  // Cambiar el estado a ENDGAME
+        }
     }
-}
+
+
+    public void perderVida() {
+        vidas--;  // Restar una vida
+    }
 
 
 // Método que maneja la muerte del jugador
-public void morir() {
-  // Lógica para manejar la muerte, como reiniciar el nivel o mostrar un mensaje de Game Over
-  println("¡Game Over!");
+public void morir(MaquinaDeEstado maquinaDeEstado) {
+    // Lógica para manejar la muerte, como reiniciar el nivel o mostrar un mensaje de Game Over
+    println("¡Game Over!");
 }
 
   public void ganarVida() {
