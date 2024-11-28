@@ -30,7 +30,7 @@ class Misil {
 
     // Inicializamos el desplazamiento para la curvatura
     if (mirandoDerecha) {
-      this.offsetX = 10;  // Desplazamiento a la derecha (curvatura inicial)
+      this.offsetX = 5;  // Desplazamiento a la derecha (curvatura inicial)
     } else {
       this.offsetX = -50;  // Desplazamiento a la izquierda
     }
