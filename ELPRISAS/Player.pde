@@ -364,11 +364,19 @@ public void drawTrajectory() {
     return vidas;
   }
 
-  public void perderVida() {
-    if (vidas > 0) {
-      vidas--;
-    }
+public void perderVida() {
+  vidas--;
+  if (vidas <= 0) {
+    // Si las vidas llegan a 0, el jugador muere (puedes definir qué pasa aquí)
+    morir();  // Método que maneja la muerte del jugador
   }
+}
+
+// Método que maneja la muerte del jugador
+public void morir() {
+  // Lógica para manejar la muerte, como reiniciar el nivel o mostrar un mensaje de Game Over
+  println("¡Game Over!");
+}
 
   public void ganarVida() {
     if (vidas < 3) {

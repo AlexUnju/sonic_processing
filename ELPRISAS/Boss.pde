@@ -5,9 +5,6 @@ class Boss {
   private float scale;
   private Player player;
   private boolean giro;  // Controla la dirección (izquierda o derecha)
-  private int cols = 4;   // Número de columnas en la hoja de sprites
-  private int rows = 4;   // Número de filas en la hoja de sprites
-  private int spriteWidth, spriteHeight;
   private SpawnMisiles spawnMisiles;
 
   private boolean enPausa = false;  // Indica si el Boss está en pausa
@@ -25,10 +22,6 @@ class Boss {
     this.scale = scale;
     this.player = player;
     this.giro = false;  // Inicialmente mirando hacia la izquierda
-
-    this.spriteWidth = image.width / cols;
-    this.spriteHeight = image.height / rows;
-
     this.spawnMisiles = new SpawnMisiles("Misil.png", 10);  // Cargar misiles
   }
 
@@ -69,7 +62,7 @@ class Boss {
 
   private void iniciarAdelantamiento() {
     // Calcular la posición objetivo (adelantarse entre 2x y 3x la distancia actual)
-    targetX = x + random(2, 3) * (player.getX() - x);
+    targetX = x + random(0.5, 1) * (player.getX() - x);
     enAdelantamiento = true;  // Comienza el proceso de adelantamiento
     giro = true;  // Asumimos que el adelantamiento será hacia la derecha
   }

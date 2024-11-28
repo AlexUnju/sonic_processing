@@ -15,7 +15,6 @@ private Player sonic;  // Instancia del jugador
 private Camera camera; // Instancia de la cámara
 private PImage endGameImage;
 private Win win;
-
 private Boss boss;
 
 //HUD

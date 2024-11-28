@@ -4,7 +4,7 @@ class Misil {
   private float speed;   // Velocidad del misil
   private float scale;   // Escala para ajustar el tamaño
   private float tiempoDeVida; // Tiempo que el misil sigue a Sonic (en segundos)
-  private float tiempoMaximo = 15; // 2 segundos para perseguir a Sonic
+  private float tiempoMaximo = 10; // 2 segundos para perseguir a Sonic
   private boolean persigueSonic;  // Determina si el misil persigue a Sonic
 
   private Player player;  // Objeto Player para obtener la posición de Sonic
@@ -30,7 +30,7 @@ class Misil {
 
     // Inicializamos el desplazamiento para la curvatura
     if (mirandoDerecha) {
-      this.offsetX = 5;  // Desplazamiento a la derecha (curvatura inicial)
+      this.offsetX = 50;  // Desplazamiento a la derecha (curvatura inicial)
     } else {
       this.offsetX = -50;  // Desplazamiento a la izquierda
     }
@@ -88,7 +88,43 @@ class Misil {
       velocidadY += gravedad;  // Continúa la caída por gravedad
       y += velocidadY;  // Movimiento hacia abajo
     }
+    
+      if (persigueSonic) {
+    // Código existente para el movimiento y curvatura...
+  } else {
+    // Si ya no persigue a Sonic, se mueve en línea recta hacia abajo
+    velocidadY += gravedad;
+    y += velocidadY;
   }
+
+  // Verificar colisión con el jugador
+  if (isCollidingWithPlayer(player)) {
+    // Disminuir vidas del jugador
+    player.perderVida();  // Método para restar una vida al jugador
+    // Opcional: Destruir el misil o reiniciarlo
+    this.destruir();  // Método que destruye o desactiva el misil
+  }
+  }
+  
+  public void destruir() {
+  // Desactivar el misil o eliminarlo de la lista de misiles activos
+  x = -1000;  // Mueve el misil fuera de la pantalla
+  y = -1000;  // O puedes eliminar el misil de una lista de objetos activos
+}
+
+  
+  // Método que verifica si el misil está colisionando con el jugador
+public boolean isCollidingWithPlayer(Player player) {
+  float playerX = player.getX();
+  float playerY = player.getY();
+  float playerWidth = player.getSpriteWidth();
+  float playerHeight = player.getSpriteHeight();
+
+  // Comprobar colisión rectangular entre el misil y el jugador
+  return x < playerX + playerWidth && x + image.width * scale > playerX &&
+         y < playerY + playerHeight && y + image.height * scale > playerY;
+}
+
 
   // Mostrar el misil en la pantalla
   public void display() {
