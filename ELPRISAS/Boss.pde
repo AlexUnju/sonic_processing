@@ -6,6 +6,7 @@ class Boss {
   private Player player;
   private boolean giro;  // Controla la dirección (izquierda o derecha)
   private SpawnMisiles spawnMisiles;
+  private SpawnAbejas spawnAbejas;
 
   private boolean enPausa = false;  // Indica si el Boss está en pausa
   private int tiempoPausa = 0;      // Duración de la pausa
@@ -23,6 +24,7 @@ class Boss {
     this.player = player;
     this.giro = false;  // Inicialmente mirando hacia la izquierda
     this.spawnMisiles = new SpawnMisiles("Misil.png", 10);  // Cargar misiles
+    this.spawnAbejas = new SpawnAbejas();
   }
 
   public void update() {
@@ -58,6 +60,8 @@ class Boss {
     }
 
     spawnMisiles.update();
+    spawnAbejas.update(player, x, y + image.height * scale / 2);
+
   }
 
   private void iniciarAdelantamiento() {
@@ -96,6 +100,8 @@ class Boss {
 
       // Mostrar misiles
       spawnMisiles.display();
+      // Mostrar abejas
+      spawnAbejas.display();
     }
   }
 
