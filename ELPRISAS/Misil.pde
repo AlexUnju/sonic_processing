@@ -97,13 +97,25 @@ class Misil {
     y += velocidadY;
   }
 
-  // Verificar colisión con el jugador
-  if (isCollidingWithPlayer(player)) {
+// Verificar colisión con el jugador
+// Verificar colisión con el jugador
+if (isCollidingWithPlayer(player)) {
     // Disminuir vidas del jugador
-    player.perderVida();  // Método para restar una vida al jugador
+    player.perderVida(maquinaDeEstado);  // Pasar la instancia correcta de MaquinaDeEstado
     // Opcional: Destruir el misil o reiniciarlo
     this.destruir();  // Método que destruye o desactiva el misil
-  }
+}
+
+
+// Continuar con la lógica para el misil dependiendo si persigue a Sonic o no
+if (persigueSonic) {
+    // Código existente para el movimiento y curvatura...
+} else {
+    // Si ya no persigue a Sonic, se mueve en línea recta hacia abajo
+    velocidadY += gravedad;
+    y += velocidadY;
+}
+  
   }
   
   public void destruir() {

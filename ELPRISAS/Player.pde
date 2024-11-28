@@ -204,10 +204,10 @@ for (float[] rect : rectangulos) {  // Iteramos sobre cada rectángulo en la lis
 
   // Restringir la posición del jugador dentro de los límites de la pantalla
 // Definir un límite para el mapa
-float mapWidth = 1800;  // Ancho total del mapa (ajusta este valor según el tamaño real del mapa)
+float mapWidth = 2000;  // Ancho total del mapa (ajusta este valor según el tamaño real del mapa)
 
 // Restringir la posición de Sonic para que no se salga del mapa
-position.x = constrain(position.x, 100, mapWidth - spriteWidth);
+  position.x = constrain(position.x, 100, mapWidth - spriteWidth);
   position.y = constrain(position.y, 0, height);
 }  
 
@@ -364,13 +364,14 @@ public void drawTrajectory() {
     return vidas;
   }
 
-public void perderVida() {
-  vidas--;
-  if (vidas <= 0) {
-    // Si las vidas llegan a 0, el jugador muere (puedes definir qué pasa aquí)
-    morir();  // Método que maneja la muerte del jugador
-  }
+// Método para manejar la pérdida de vida y notificar al sistema de estados
+public void perderVida(MaquinaDeEstado maquinaDeEstado) {
+    vidas--;  // Disminuir una vida
+    if (vidas <= 0) {
+        // Si las vidas llegan a 0, notificamos a la máquina de estados
+    }
 }
+
 
 // Método que maneja la muerte del jugador
 public void morir() {

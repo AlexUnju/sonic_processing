@@ -57,7 +57,7 @@ void setup() {
   boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 5, 0.25, sonic);
 
   // Crear la máquina de estados
-  maquinaDeEstado = new MaquinaDeEstado(menu);
+  maquinaDeEstado = new MaquinaDeEstado(menu, sonic);
 
   // Cargar y reproducir el sonido de fondo
   startMenuSound = new SoundFile(this, "data/sound/startMenu.mp3");
@@ -91,7 +91,7 @@ void setup() {
   
    spawn = new SpawnEnemigos(); // Crear el objeto de spawn
     // Agregar rectángulos verdes al escenario
-  escenario.agregarRectangulo(100, 590, 850, 70);
+  escenario.agregarRectangulo(100, 590, 2000, 70);
   escenario.agregarRectangulo(300, 350, 100, 50);
   escenario.agregarRectangulo(650, 490, 190, 10);
 }

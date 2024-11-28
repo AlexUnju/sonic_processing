@@ -22,7 +22,7 @@ class SpawnAbejas {
       abeja.update();
   
       if (abeja.colisiona(player)) {
-        player.perderVida();
+player.perderVida(maquinaDeEstado);  // Pasar la instancia correcta de MaquinaDeEstado
         abejas.remove(i);
       }
     }

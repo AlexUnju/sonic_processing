@@ -2,6 +2,7 @@ class MaquinaDeEstado {
   private Menu menu;
   private Escenario escenario;
   private Win win;  // Añadir la referencia a la clase Win
+  private Player player;
 
   public static final int INICIO = 0;
   public static final int ESPERA = 1;
@@ -15,91 +16,106 @@ class MaquinaDeEstado {
   private boolean fadeOut = true;
   private boolean animacionFinalizada = false;
 
-  public MaquinaDeEstado(Menu menu) {
+public MaquinaDeEstado(Menu menu, Player player) {
     this.menu = menu;
     this.escenario = new Escenario("escenario/scene0.png");
     this.win = new Win();  // Inicializar la clase Win
+    this.player = player;  // Asegurarte de que player no sea null
   }
 
-  public void update() {
+public void update() {
     switch (estado) {
-      case INICIO:
-        if (menu.getCurrentFrame() < 12) {
-          if (frameCount % 5 == 0) {
-            menu.setCurrentFrame(menu.getCurrentFrame() + 1);
-          }
-        } else {
-          estado = ESPERA;
-        }
-        menu.drawMenu("", 255);
-        break;
+        case INICIO:
+            if (menu.getCurrentFrame() < 12) {
+                if (frameCount % 5 == 0) {
+                    menu.setCurrentFrame(menu.getCurrentFrame() + 1);
+                }
+            } else {
+                estado = ESPERA;
+            }
+            menu.drawMenu("", 255);
+            break;
 
-      case ESPERA:
-        if (frameCount % 5 == 0) {
-          int current = menu.getCurrentFrame();
-          if (current < 12 || current >= 29) {
-            menu.setCurrentFrame(12);
-          } else {
-            menu.setCurrentFrame(current + 1);
-          }
-        }
+        case ESPERA:
+            if (frameCount % 5 == 0) {
+                int current = menu.getCurrentFrame();
+                if (current < 12 || current >= 29) {
+                    menu.setCurrentFrame(12);
+                } else {
+                    menu.setCurrentFrame(current + 1);
+                }
+            }
 
-        if (frameCount % 5 == 0) {
-          if (fadeOut) {
-            textAlpha -= 15;
-            if (textAlpha <= 50) fadeOut = false;
-          } else {
-            textAlpha += 15;
-            if (textAlpha >= 255) fadeOut = true;
-          }
-        }
+            if (frameCount % 5 == 0) {
+                if (fadeOut) {
+                    textAlpha -= 15;
+                    if (textAlpha <= 50) fadeOut = false;
+                } else {
+                    textAlpha += 15;
+                    if (textAlpha >= 255) fadeOut = true;
+                }
+            }
 
-        menu.drawMenu("Presiona ENTER para iniciar", textAlpha);
-        break;
+            menu.drawMenu("Presiona ENTER para iniciar", textAlpha);
+            break;
 
-      case TRANSICION:
-        if (menu.getCurrentFrame() < 39) {
-          if (frameCount % 5 == 0) {
-            menu.setCurrentFrame(menu.getCurrentFrame() + 1);
-          }
-        } else {
-          animacionFinalizada = true;
-        }
+        case TRANSICION:
+            if (menu.getCurrentFrame() < 39) {
+                if (frameCount % 5 == 0) {
+                    menu.setCurrentFrame(menu.getCurrentFrame() + 1);
+                }
+            } else {
+                animacionFinalizada = true;
+            }
 
-        if (textAlpha > 0) {
-          textAlpha -= 10;
-        }
+            if (textAlpha > 0) {
+                textAlpha -= 10;
+            }
 
-        menu.drawMenu("Iniciando juego...", textAlpha);
+            menu.drawMenu("Iniciando juego...", textAlpha);
 
-        if (animacionFinalizada) {
-          estado = ESCENARIO;
-          animacionFinalizada = false;
-        }
-        break;
+            if (animacionFinalizada) {
+                estado = ESCENARIO;
+                animacionFinalizada = false;
+            }
+            break;
 
-      case ESCENARIO:
-        // Aquí agregamos la lógica del juego mientras está en el escenario.
-        break;
+        case ESCENARIO:
+            // Aquí agregamos la lógica del juego mientras está en el escenario.
+            // Si el jugador ha perdido todas sus vidas, cambiamos el estado.
+            if (playerHaPerdido()) { // Suponiendo que tienes un método que verifica si el jugador ha perdido
+                estado = ENDGAME; // Cambiar al estado de fin de juego
+            }
+            break;
 
-      case ENDGAME:
-        background(0);
-        if (endGameImage != null) {
-          imageMode(CENTER);
-          image(endGameImage, width / 2, height / 2 - 50);
-        }
-        textAlign(CENTER, CENTER);
-        fill(255);
-        textSize(20);
-        text("Pulsa ESC para salir", width / 2, height / 2 + 150);
-        break;
+        case ENDGAME:
+            background(0);
+            if (endGameImage != null) {
+                imageMode(CENTER);
+                image(endGameImage, width / 2, height / 2 - 50);
+            }
+            textAlign(CENTER, CENTER);
+            fill(255);
+            textSize(20);
+            text("Pulsa ESC para salir", width / 2, height / 2 + 150);
+            break;
 
-      case WIN:
-        // Mostrar pantalla de victoria
-        win.display();
-        break;
+        case WIN:
+            // Mostrar pantalla de victoria
+            win.display();
+            break;
     }
-  }
+}
+
+private boolean playerHaPerdido() {
+    if (player == null) {
+        println("Error: El objeto player no está inicializado.");
+        return false;  // O true, dependiendo de lo que quieras hacer en este caso
+    }
+    return player.getVidas() <= 0;
+}
+
+
 
   public void keyPressed(char key) {
     if (estado == ESPERA && key == ENTER) {
