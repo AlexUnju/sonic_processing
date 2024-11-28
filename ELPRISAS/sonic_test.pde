@@ -6,7 +6,7 @@ private MaquinaDeEstado maquinaDeEstado;
 private SoundFile startMenuSound;  // Variable para el sonido
 private SoundFile gameMusic;
 private Parallax parallax;
-private SpawnEnemigos spawn;
+SpawnEnemigos spawn;
 // Variables para el jugador
 private PImage spriteSheet;
 private int spriteWidth = 252 / 6;  // Ancho de un sprite (6 columnas)
