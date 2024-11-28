@@ -23,7 +23,6 @@ public MaquinaDeEstado(Menu menu, Player player) {
     this.escenario = new Escenario("escenario/scene0.png");
     this.win = new Win();  // Inicializar la clase Win
     this.player = player;  // Asegurarte de que player no sea null
-    this.boss = new Boss("Eggman.png", 100, 100, 2, 1.5f, player, 10, this);
 
   }
 

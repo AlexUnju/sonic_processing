@@ -15,26 +15,47 @@ class Boss {
   private boolean enAdelantamiento = false; // Indica si está en proceso de adelantarse
   private float targetX;  // Posición objetivo para el adelantamiento
   private MaquinaDeEstado maquinaDeEstado;  // Declara la referencia a MaquinaDeEstado
-
+  
+  // Atributo para almacenar el sonido de colisión
+  private SoundFile collisionSound; // Sonido al recibir daño
+  private SoundFile crashSound; // Sonido al chocar con el jugador
 
   // Nueva variable para la vida del Boss
   private int vida = 1000;  // Vida inicial del Boss
 
-  public Boss(String imagePath, float startX, float startY, float speed, float scale, Player player, int vidaInicial, MaquinaDeEstado maquinaDeEstado) {
-    this.image = loadImage(imagePath);  // Cargar la imagen del Boss
+  public Boss(PApplet app, String imagePath, float startX, float startY, float speed, float scale, Player player, int vidaInicial, MaquinaDeEstado maquinaDeEstado) {
+    this.image = loadImage(imagePath);
     this.x = startX;
     this.y = startY;
     this.speed = speed;
     this.scale = scale;
     this.player = player;
-    this.giro = false;  // Inicialmente mirando hacia la izquierda
-    this.spawnMisiles = new SpawnMisiles("Misil.png", 100);  // Cargar misiles
-    this.spawnAbejas = new SpawnAbejas();
-    this.maquinaDeEstado = maquinaDeEstado;  // Inicializamos la referencia a MaquinaDeEstado
+    this.giro = false;
 
+    // Instanciar SpawnMisiles con la ruta de la imagen del misil y el sonido
+    this.spawnMisiles = new SpawnMisiles(app, "Misil.png", "sound/Fireball.wav", 100);  // Pasar la referencia de PApplet
+
+    this.spawnAbejas = new SpawnAbejas(maquinaDeEstado);
+    
+    // Instanciar los sonidos directamente
+    collisionSound = new SoundFile(app, "sound/CollapsePlatform.wav");
+    crashSound = new SoundFile(app, "sound/Crash.wav");
+
+    this.maquinaDeEstado = maquinaDeEstado;
   }
 
   public void update() {
+     // Detectar colisión mientras el jugador está saltando
+    if (checkCollisionWithPlayer()) {
+    if (player.isJumping()) {
+        takeDamage(10); // Reducir vida del Boss
+        if (collisionSound != null) collisionSound.play(); // Sonido de daño al Boss
+    } else {
+        player.perderVida(); // Reducir vida del jugador
+        if (crashSound != null) crashSound.play(); // Sonido de choque
+    }
+}
+    
     if (enPausa) {
       contadorPausa++;
       if (contadorPausa >= tiempoPausa) {
@@ -68,51 +89,43 @@ class Boss {
 
     spawnMisiles.update();
     spawnAbejas.update(player, x, y + image.height * scale / 2);
-    
-    // Detectar colisión con el Player y reducir vida
-    if (checkCollisionWithPlayer()) {
-      takeDamage(10);  // El Boss pierde 10 de vida cada vez que colisiona con el Player
-    }
   }
   
-    private void takeDamage(int damage) {
+private void takeDamage(int damage) {
     vida -= damage;
     if (vida <= 0) {
-      vida = 0;
-      winScenario();  // Mostrar escenario WIN cuando el Boss muere
+        vida = 0;
+        winScenario(); // Escenario de victoria
     }
-  }
+}
   
-  
+// Detecta la colisión entre el Boss y el Player
 // Detecta la colisión entre el Boss y el Player
 private boolean checkCollisionWithPlayer() {
     float bossWidth = image.width * scale;
     float bossHeight = image.height * scale;
+    float playerWidth = 50; // Ajusta al tamaño del jugador
+    float playerHeight = 100;
 
-    // Usando las dimensiones del Player si no tiene imagen
-    float playerWidth = 50; // Ejemplo: el ancho del jugador es 50
-    float playerHeight = 100; // Ejemplo: el alto del jugador es 100
-
-    // Verifica si las áreas del Boss y el Player se solapan
-    return (x < player.getX() + playerWidth &&
-            x + bossWidth > player.getX() &&
-            y < player.getY() + playerHeight &&
-            y + bossHeight > player.getY());
+    // Calcular si hay colisión
+    boolean collision = (x < player.getX() + playerWidth &&
+                         x + bossWidth > player.getX() &&
+                         y < player.getY() + playerHeight &&
+                         y + bossHeight > player.getY());
+    return collision;
 }
-
-
-
-
 
   private void winScenario() {
     // Mostrar el escenario de WIN
     println("¡WIN! El Boss ha sido derrotado.");
 
     // Verifica si maquinaDeEstado no es null antes de llamar a setEstado
+    if (maquinaDeEstado != null) {
       maquinaDeEstado.setEstado(MaquinaDeEstado.WIN);
+    } else {
+      println("Error: maquinaDeEstado es null.");
+    }
   }
-  
-  
 
   private void iniciarAdelantamiento() {
     // Calcular la posición objetivo (adelantarse entre 2x y 3x la distancia actual)
@@ -149,7 +162,8 @@ private boolean checkCollisionWithPlayer() {
       popMatrix();
       
 
-
+        // Mostrar barra de vida del Boss
+        drawHealthBar();
       // Mostrar misiles
       spawnMisiles.display();
       // Mostrar abejas
@@ -165,6 +179,32 @@ private void drawHitbox() {
     stroke(148, 0, 211);  // Color violeta para el borde (RGB)
     noFill();  // Sin relleno
     rect(x, y, image.width * scale, image.height * scale);  // Rectángulo que representa el hitbox
+}
+
+/**
+ * Dibuja la barra de vida del Boss.
+ */
+private void drawHealthBar() {
+    float barWidth = image.width * scale;   // Ancho de la barra basado en la imagen del Boss
+    float barHeight = 10;                   // Altura de la barra de vida
+    float barX = x;                         // Posición horizontal de la barra (encima del Boss)
+    float barY = y - 20;                    // Posición vertical de la barra (encima del Boss)
+    
+    // Porcentaje de vida restante
+    float healthPercentage = (float) vida / 1000; // Ajustar según la vida máxima
+
+    // Dibujar fondo de la barra (rojo para la barra vacía)
+    fill(255, 0, 0);  // Rojo
+    rect(barX, barY, barWidth, barHeight);
+
+    // Dibujar la parte verde de la barra que representa la vida restante
+    fill(0, 255, 0);  // Verde
+    rect(barX, barY, barWidth * healthPercentage, barHeight);
+
+    // Borde negro alrededor de la barra de vida
+    noFill();
+    stroke(0);  // Negro
+    rect(barX, barY, barWidth, barHeight);
 }
 
   public float getX() {

@@ -373,16 +373,16 @@ public void drawTrajectory() {
     }
 
 
-    public void perderVida() {
-        vidas--;  // Restar una vida
+// Método en Player para perder una vida
+public void perderVida() {
+    vidas--;
+    if (vidas <= 0) {
+        vidas = 0;
+        println("GAME OVER"); // Aquí puedes cambiar al estado de GAME OVER si tienes lógica de estados
     }
-
-
-// Método que maneja la muerte del jugador
-public void morir(MaquinaDeEstado maquinaDeEstado) {
-    // Lógica para manejar la muerte, como reiniciar el nivel o mostrar un mensaje de Game Over
-    println("¡Game Over!");
 }
+
+
 
   public void ganarVida() {
     if (vidas < 5) {

@@ -62,7 +62,8 @@ void setup() {
   sonic = new Player(100, height - 100, spriteWidth, spriteHeight);
   
   // Ahora que `maquinaDeEstado` está inicializado, creamos el Boss
-  boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 5, 0.25, sonic, 10, maquinaDeEstado);
+  // Cambia la línea de la creación del Boss de esta forma:
+  boss = new Boss(this, "Eggman.png", sonic.getX(), sonic.getY() - 300, 5, 0.25, sonic, 10, maquinaDeEstado);
 
   // Cargar y reproducir el sonido de fondo
   startMenuSound = new SoundFile(this, "data/sound/startMenu.mp3");
