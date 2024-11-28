@@ -32,6 +32,9 @@ private Debug debug;
 private SoundFile gameoverSound;  // Variable para el sonido del Game Over
 private boolean gameoverSoundPlayed = false;  // Flag para saber si se ha reproducido el Game Over
 
+private Joypad joypad;
+
+
 void setup() {
   size(800, 600);  // Tamaño de la ventana
   String[] fondoArchivos = {"fondo/fondo0.png", "fondo/fondo1.png", "fondo/fondo2.png"};
@@ -96,6 +99,9 @@ void setup() {
   escenario.agregarRectangulo(100, 590, 2000, 70);
   escenario.agregarRectangulo(300, 350, 100, 50);
   escenario.agregarRectangulo(650, 490, 190, 10);
+  
+  joypad = new Joypad(sonic, debug, maquinaDeEstado);
+
 }
 
 
@@ -148,8 +154,9 @@ void draw() {
   popMatrix();  // Vuelve a la matriz original para no afectar el resto
   
   //HUD
-   // Dibujar HUD
-  hud.display();
+  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ESCENARIO) {
+    hud.display();
+  }
   
   // Actualizar la máquina de estados (esta controla qué se dibuja)
   maquinaDeEstado.update();
@@ -160,30 +167,9 @@ void draw() {
 }
 
 void keyPressed() {
-  maquinaDeEstado.keyPressed(key);  // Maneja la tecla presionada
-  if (key == 'a') sonic.move(-1);   // Mover a la izquierda
-  if (key == 'd') sonic.move(1);    // Mover a la derecha
-  if (key == ' ') sonic.jump();     // Salto
-  if (key == 'q') debug.toggleDebug(sonic);  // Alternar la depuración
-  // Simulación de recoger una vida extra
-  if (key == 'r') { // Presiona 'r' para ganar una vida
-    sonic.ganarVida();
-  }
-  // Cambiar al estado WIN al presionar la tecla 'p'
-  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ESCENARIO && key == 'p') {
-    maquinaDeEstado.setEstado(MaquinaDeEstado.WIN);
-  }
-// Cambiar al estado ENDGAME al presionar 'l' o 'L' en estado ESCENARIO
-  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ESCENARIO && (key == 'l' || key == 'L')) {
-    maquinaDeEstado.setEstado(MaquinaDeEstado.ENDGAME);
-  }
-
-  // Salir del juego al presionar ESC en estado END_GAME
-  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ENDGAME && key == ESC) {
-    exit();
-  }
+  joypad.keyPressed(key);
 }
 
 void keyReleased() {
-  if (key == 'a' || key == 'd') sonic.stop();  // Detener movimiento al soltar la tecla
+  joypad.keyReleased(key);
 }
