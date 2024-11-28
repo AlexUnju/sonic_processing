@@ -6,7 +6,6 @@ private MaquinaDeEstado maquinaDeEstado;
 private SoundFile startMenuSound;  // Variable para el sonido
 private SoundFile gameMusic;
 private Parallax parallax;
-SpawnEnemigos spawn;
 // Variables para el jugador
 private PImage spriteSheet;
 private int spriteWidth = 252 / 6;  // Ancho de un sprite (6 columnas)
@@ -95,7 +94,6 @@ void setup() {
   escenario.setPosicionX(100);  // Desplaza el fondo 100 píxeles a la derecha
   escenario.setPosicionY(55);   // Desplaza el fondo 50 píxeles hacia abajo
   
-  spawn = new SpawnEnemigos(); // Crear el objeto de spawn
   // Agregar rectángulos verdes al escenario
   escenario.agregarRectangulo(100, 590, 2000, 70);
   escenario.agregarRectangulo(300, 350, 100, 50);
@@ -164,7 +162,6 @@ void draw() {
   
   // Mostrar la información de depuración
   debug.display(sonic, camera);  // Pasa la instancia de Boss
-  spawn.generarEnemigos(); // Generar enemigos de forma aleatoria
 }
 
 void keyPressed() {

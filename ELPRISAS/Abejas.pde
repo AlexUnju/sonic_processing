@@ -3,12 +3,11 @@ public class Abeja {
   private float speedX, speedY;
   private float velocidad;  // Velocidad constante de la abeja
   private PImage sprite;
-  private boolean destruida; // Para marcar si la abeja ha sido destruida
 
   public Abeja(float startX, float startY, float sonicX, float sonicY, String spritePath) {
     this.x = startX;
     this.y = startY;
-    this.velocidad = 2;
+    this.velocidad = 12;  // Velocidad fija de la abeja
     this.sprite = loadImage(spritePath);
 
     // Calcular dirección hacia Sonic

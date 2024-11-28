@@ -125,7 +125,7 @@ if (persigueSonic) {
   public void destruir() {
   // Desactivar el misil o eliminarlo de la lista de misiles activos
   x = -1000;  // Mueve el misil fuera de la pantalla
-  y = -1000;  // O puedes eliminar el misil de una lista de objetos activos
+  y = 100;  // O puedes eliminar el misil de una lista de objetos activos
 }
 
   
