@@ -3,7 +3,7 @@ class Camera {
   private float offsetY;  // Desfase vertical
 
   public Camera() {
-    x = (width / 2);
+    x = width / 2;
     y = height / 2;
   }
   

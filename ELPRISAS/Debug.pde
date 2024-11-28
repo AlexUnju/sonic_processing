@@ -83,7 +83,6 @@ private void drawTextWithOutline(String txt, float x, float y) {
     rect(spriteRectX + col * spriteWidth, spriteRectY + row * spriteHeight, spriteWidth, spriteHeight);
   }
 
-
   // Métodos getter y setter para showDebug
   public void setShowDebug(boolean showDebug) {
     this.showDebug = showDebug;

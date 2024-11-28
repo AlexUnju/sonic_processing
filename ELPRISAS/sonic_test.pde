@@ -53,7 +53,7 @@ void setup() {
   PFont pixelFont = createFont("Font/NiseSegaSonic.ttf", 32);
   menu = new Menu(40, 150, 100, pixelFont);
 
-  sonic = new Player(100, height - spriteHeight, spriteWidth, spriteHeight);
+  sonic = new Player(100, height - 100, spriteWidth, spriteHeight);
   
   boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 5, 0.25, sonic);
 

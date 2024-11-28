@@ -88,7 +88,6 @@ public void move(int dir) {
     frame = (frame + animationSpeed) % cols;
 }
 
-
   /**
    * Detiene el movimiento del jugador.
    */
@@ -205,7 +204,7 @@ for (float[] rect : rectangulos) {  // Iteramos sobre cada rectángulo en la lis
 
   // Restringir la posición del jugador dentro de los límites de la pantalla
 // Definir un límite para el mapa
-float mapWidth = 2000;  // Ancho total del mapa (ajusta este valor según el tamaño real del mapa)
+float mapWidth = 1800;  // Ancho total del mapa (ajusta este valor según el tamaño real del mapa)
 
 // Restringir la posición de Sonic para que no se salga del mapa
 position.x = constrain(position.x, 100, mapWidth - spriteWidth);
@@ -220,7 +219,7 @@ position.x = constrain(position.x, 100, mapWidth - spriteWidth);
       noFill();
       stroke(#FF0303); // Color rojo para la hitbox
       rectMode(CENTER);
-      rect(position.x + 20, position.y + 20, spriteWidth, spriteHeight);
+      rect(position.x+20, position.y+20, spriteWidth, spriteHeight); // Dibuja el rectángulo centrado
     }
   }
 
@@ -288,7 +287,6 @@ public void drawTrajectory() {
     drawHitbox();
     drawTrajectory();
     
-    rect(position.x, position.y, spriteWidth, spriteHeight);
   }
 
   // Getters and setters
