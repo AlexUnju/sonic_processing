@@ -124,8 +124,6 @@ void draw() {
     boss.update();
     boss.display();
    
-    spawn.generarEnemigos(); // Generar enemigos de forma aleatoria
-    spawn.dibujarEnemigos(); // Dibujar los enemigos en pantalla   
   }
   
   // Verificar si estamos en el estado WIN (pantalla de victoria)
@@ -156,7 +154,7 @@ void draw() {
   
   // Mostrar la información de depuración
   debug.display(sonic, camera);  // Este método ahora maneja la depuración visual para Sonic y la cámara
- 
+  spawn.generarEnemigos(); // Generar enemigos de forma aleatoria
 }
 
 void keyPressed() {

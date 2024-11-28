@@ -54,22 +54,40 @@ class Player {
    * Mueve al jugador en la dirección especificada.
    */
 public void move(int dir) {
-    if (!jumping) { // Si el jugador no está saltando.
-        if (state.equals("Running")) { // Si el estado es "Running" (corriendo).
-            xVel += dir * speed;  // Incrementa o decrementa la velocidad horizontal en función de la dirección.
-            xVel = constrain(xVel, -maxSpeed, maxSpeed); // Limita la velocidad máxima.
+    // Calcula la aceleración basada en si el jugador está en el aire o en el suelo
+    float acceleration = dir * speed;
+    if (!jumping) { 
+        if (state.equals("Running")) { 
+            // Aceleración normal al correr
+            xVel += acceleration;
         } else {
-            xVel = dir * speed;  // Si no está corriendo, simplemente asigna la velocidad en la dirección.
+            // Movimiento directo si no está corriendo
+            xVel = dir * speed;
         }
-        facingLeft = dir < 0; // Si la dirección es negativa (izquierda), el jugador está mirando a la izquierda.
-        state = dir < 0 ? "Moving Left" : "Moving Right"; // Cambia el estado según la dirección.
-        frame = (frame + animationSpeed) % cols; // Actualiza el frame de la animación.
-
-        if (moveTimer < moveThreshold) { // Controla el tiempo de movimiento.
-            moveTimer++;
-        }
+    } else {
+        // Menor control en el aire
+        acceleration *= 0.5;
+        xVel += acceleration;
     }
+
+    // Constrain velocidad horizontal dentro de los límites permitidos
+    xVel = constrain(xVel, -maxSpeed, maxSpeed);
+
+    // Determina la dirección en la que está mirando el jugador
+    facingLeft = dir < 0;
+
+    // Actualiza el estado en función de la dirección
+    state = dir < 0 ? "Moving Left" : "Moving Right";
+
+    // Actualiza el temporizador de movimiento
+    if (moveTimer < moveThreshold) {
+        moveTimer++;
+    }
+
+    // Actualiza el frame de animación
+    frame = (frame + animationSpeed) % cols;
 }
+
 
   /**
    * Detiene el movimiento del jugador.
@@ -97,57 +115,51 @@ public void jump() {
     jumpTimer = 0; // Reinicia el temporizador del salto.
     jumpSound.play();  // Reproduce el sonido de salto
   }
-      if (onGround) {
-      yVel = jumpStrength;
-      onGround = false;
-      jumpSound.play();
-    }
 }
 
   public void update(ArrayList<float[]> rectangulos) {
-  // Apply gravity if not on ground
+  // Aplica la gravedad si no está en el suelo
   if (!onGround) {
     yVel += gravity;
   }
 
-  // Change to "Running" state if moved enough
+  // Aplica la velocidad horizontal y vertical
   if (moveTimer >= moveThreshold && !jumping) {
     state = "Running";
   }
 
-  // Apply horizontal and vertical velocity
+  // Aplica la velocidad horizontal y vertical
   position.x += xVel;
   position.y += yVel;
 
-  // Check collisions with rectangles
-  onGround = false;
-  for (float[] rect : rectangulos) {
-    if (isColliding(position.x, position.y, spriteWidth, spriteHeight, rect)) {
-      // If player is falling, stop the fall and adjust position
-      if (yVel > 0 && position.y + spriteHeight <= rect[1] + yVel) {
-        position.y = rect[1] - spriteHeight;
-        onGround = true;
-        yVel = 0;
-        jumping = false;
-        
-        // Change state based on horizontal velocity
-        if (abs(xVel) > 0.1) {
-          state = "Inertia";
-        } else {
-          state = "Idle";
-        }
-        
-        // Clear trajectory on landing
-        trajectory.clear();
-      }
-      // Allow player to pass through from below
-      else if (yVel < 0) {
-        continue;
-      }
+  // Verificar colisiones con rectángulos
+  onGround = false;  // Inicializamos en false, indicando que el jugador no está en el suelo.
+
+for (float[] rect : rectangulos) {  // Iteramos sobre cada rectángulo en la lista de "rectangulos".
+  
+  // Comprobamos si hay colisión entre el jugador y el rectángulo actual.
+  if (isColliding(position.x, position.y, spriteWidth, spriteHeight, rect)) {
+    
+    // Si el jugador está cayendo (yVel > 0), se verifica si está por encima del rectángulo y lo ajustamos.
+    if (yVel > 0 && position.y + spriteHeight <= rect[1] + yVel) {
+      
+      // Ajustar la posición del jugador para que quede justo encima del rectángulo
+      position.y = rect[1] - spriteHeight;  
+      
+      // Marcamos que el jugador ha aterrizado en el suelo
+      onGround = true;  
+      
+      // Detenemos la velocidad vertical, ya que el jugador ha dejado de caer
+      yVel = 0;  
+      
+      // Terminamos el estado de salto, ya que el jugador ha aterrizado
+      jumping = false;  
     }
   }
+}
 
-  // Apply friction if in "Inertia" state
+
+  // Aplica la fricción si está en el estado de "Inertia"
   if (state.equals("Inertia")) {
     xVel *= friction;
     if (abs(xVel) < 0.1) {
@@ -156,17 +168,12 @@ public void jump() {
     }
   }
 
-  // Apply additional friction when on ground
-  if (onGround) {
-    xVel *= 0.9;
-  }
-
-  // Add trajectory points when jumping
+  // Añadir puntos a la trayectoria cuando Sonic está saltando
   if (jumping) {
     trajectory.add(new PVector(position.x, position.y));
   }
 
-  // Update jump animation
+  // Actualiza la animación del salto
   if (jumping && state.equals("Jumping")) {
     jumpTimer++;
     if (jumpTimer >= jumpDelay) {
@@ -178,7 +185,7 @@ public void jump() {
     }
   }
 
-  // Update animation speed based on player state
+  // Actualiza la velocidad de la animación según el estado del jugador
   if (state.equals("Inertia") || state.equals("Running")) {
     animationSpeed = map(abs(xVel), 0, maxSpeed, 0.1, 1.0);
     isAnimating = true;
@@ -191,14 +198,18 @@ public void jump() {
     isAnimating = true;
   }
 
-  // Update animation frame if animating
+  // Actualiza el frame de la animación si está animando
   if (isAnimating) {
     frame = (frame + animationSpeed) % cols;
   }
 
-  // Constrain player position to screen bounds
-  position.x = constrain(position.x, 0, width - spriteWidth);
-  position.y = constrain(position.y, 0, height - spriteHeight);
+  // Restringir la posición del jugador dentro de los límites de la pantalla
+// Definir un límite para el mapa
+float mapWidth = 2000;  // Ancho total del mapa (ajusta este valor según el tamaño real del mapa)
+
+// Restringir la posición de Sonic para que no se salga del mapa
+position.x = constrain(position.x, 100, mapWidth - spriteWidth);
+  position.y = constrain(position.y, 0, height);
 }  
 
  /**
@@ -207,7 +218,7 @@ public void jump() {
   public void drawHitbox() {
     if (showHitbox) {
       noFill();
-      stroke(#FF0303); // Color rojpara la hitbox
+      stroke(#FF0303); // Color rojo para la hitbox
       rectMode(CENTER);
       rect(position.x + 20, position.y + 20, spriteWidth, spriteHeight);
     }
@@ -222,19 +233,6 @@ public void drawTrajectory() {
     vertex(point.x, point.y);
   }
   endShape();
-  
-  // Al aterrizar
-  if (position.y >= height - spriteHeight) {
-    position.y = height - spriteHeight;
-    yVel = 1;
-    if (state.equals("Jumping")) {
-      state = (abs(xVel) > 0.1) ? "Inertia" : "Idle";
-    }
-    jumping = false;
-    
-    // Limpiar la trayectoria al aterrizar
-    trajectory.clear();
-  }
   }
 }
 

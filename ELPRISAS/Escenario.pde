@@ -34,7 +34,6 @@ class Escenario {
     }
     
        // Dibujar rectángulos verdes
-    fill(0, 255, 0);  // Color verde
     noStroke();
     for (float[] rect : rectangulos) {
       rect(rect[0] + offsetX, rect[1], rect[2], rect[3]); // Ajustar posición por desplazamiento
