@@ -380,7 +380,7 @@ public void morir() {
 }
 
   public void ganarVida() {
-    if (vidas < 3) {
+    if (vidas < 5) {
       vidas++;
     }
   }

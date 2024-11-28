@@ -39,12 +39,13 @@ void setup() {
 
   // Cargar el spriteSheet de Sonic
   spriteSheet = loadImage("sonic/sonic-10.png");
+  
   // Crear objeto Parallax
   parallax = new Parallax(fondoArchivos, 1, 1.5, 0, -150, 16);
+  
   // Crear una instancia de la clase Win
   win = new Win();
 
-  
   // Cargar la imagen de fin de juego
   endGameImage = loadImage("endgame.png");
 
@@ -52,16 +53,17 @@ void setup() {
   PFont pixelFont = createFont("Font/NiseSegaSonic.ttf", 32);
   menu = new Menu(40, 150, 100, pixelFont);
 
-  sonic = new Player(100, height - 100, spriteWidth, spriteHeight);
-  
-  boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 5, 0.25, sonic);
-
   // Crear la máquina de estados
   maquinaDeEstado = new MaquinaDeEstado(menu, sonic);
 
+  sonic = new Player(100, height - 100, spriteWidth, spriteHeight);
+  
+  // Ahora que `maquinaDeEstado` está inicializado, creamos el Boss
+  boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 5, 0.25, sonic, 10, maquinaDeEstado);
+
   // Cargar y reproducir el sonido de fondo
   startMenuSound = new SoundFile(this, "data/sound/startMenu.mp3");
-  startMenuSound.loop();  // Reproduce el sonido en bucle
+  startMenuSound.loop();  // Reproducir el sonido en bucle
   
   gameMusic = new SoundFile(this, "data/sound/Sonic_The_Hedgehog.mp3");
 
@@ -89,12 +91,13 @@ void setup() {
   escenario.setPosicionX(100);  // Desplaza el fondo 100 píxeles a la derecha
   escenario.setPosicionY(55);   // Desplaza el fondo 50 píxeles hacia abajo
   
-   spawn = new SpawnEnemigos(); // Crear el objeto de spawn
-    // Agregar rectángulos verdes al escenario
+  spawn = new SpawnEnemigos(); // Crear el objeto de spawn
+  // Agregar rectángulos verdes al escenario
   escenario.agregarRectangulo(100, 590, 2000, 70);
   escenario.agregarRectangulo(300, 350, 100, 50);
   escenario.agregarRectangulo(650, 490, 190, 10);
 }
+
 
 void draw() {
   background(0);  // Limpia el fondo
@@ -152,7 +155,7 @@ void draw() {
   maquinaDeEstado.update();
   
   // Mostrar la información de depuración
-  debug.display(sonic, camera);  // Este método ahora maneja la depuración visual para Sonic y la cámara
+  debug.display(sonic, camera);  // Pasa la instancia de Boss
   spawn.generarEnemigos(); // Generar enemigos de forma aleatoria
 }
 

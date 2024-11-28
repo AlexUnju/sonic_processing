@@ -54,7 +54,6 @@ public void toggleDebug(Player player) {
     player.setShowTrajectory(showDebug);
 }
 
-
 /**
  * Dibuja un texto con un contorno negro.
  */

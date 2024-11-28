@@ -3,6 +3,8 @@ class MaquinaDeEstado {
   private Escenario escenario;
   private Win win;  // Añadir la referencia a la clase Win
   private Player player;
+  private Boss boss;  // Referencia al Boss
+
 
   public static final int INICIO = 0;
   public static final int ESPERA = 1;
@@ -21,6 +23,8 @@ public MaquinaDeEstado(Menu menu, Player player) {
     this.escenario = new Escenario("escenario/scene0.png");
     this.win = new Win();  // Inicializar la clase Win
     this.player = player;  // Asegurarte de que player no sea null
+    this.boss = new Boss("Eggman.png", 100, 100, 2, 1.5f, player, 10, this);
+
   }
 
 public void update() {
@@ -109,7 +113,7 @@ public void update() {
 
 private boolean playerHaPerdido() {
     if (player == null) {
-        println("Error: El objeto player no está inicializado.");
+        println("no perdio");
         return false;  // O true, dependiendo de lo que quieras hacer en este caso
     }
     return player.getVidas() <= 0;

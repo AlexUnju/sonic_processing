@@ -14,8 +14,13 @@ class Boss {
   private boolean adelantado = false; // Indica si el Boss ya se adelantó
   private boolean enAdelantamiento = false; // Indica si está en proceso de adelantarse
   private float targetX;  // Posición objetivo para el adelantamiento
+  private MaquinaDeEstado maquinaDeEstado;  // Declara la referencia a MaquinaDeEstado
 
-  public Boss(String imagePath, float startX, float startY, float speed, float scale, Player player) {
+
+  // Nueva variable para la vida del Boss
+  private int vida = 1000;  // Vida inicial del Boss
+
+  public Boss(String imagePath, float startX, float startY, float speed, float scale, Player player, int vidaInicial, MaquinaDeEstado maquinaDeEstado) {
     this.image = loadImage(imagePath);  // Cargar la imagen del Boss
     this.x = startX;
     this.y = startY;
@@ -23,8 +28,10 @@ class Boss {
     this.scale = scale;
     this.player = player;
     this.giro = false;  // Inicialmente mirando hacia la izquierda
-    this.spawnMisiles = new SpawnMisiles("Misil.png", 10);  // Cargar misiles
+    this.spawnMisiles = new SpawnMisiles("Misil.png", 100);  // Cargar misiles
     this.spawnAbejas = new SpawnAbejas();
+    this.maquinaDeEstado = maquinaDeEstado;  // Inicializamos la referencia a MaquinaDeEstado
+
   }
 
   public void update() {
@@ -43,7 +50,7 @@ class Boss {
       if (player.getXVel() > 2 && player.getX() > x && !adelantado) {
         iniciarAdelantamiento();  // Iniciar el adelantamiento si Sonic está corriendo rápido hacia la derecha
       } else if (!adelantado) {
-        if (abs(player.getX() - x) > 5) {  // Solo moverse si hay una diferencia significativa
+        if (abs(player.getX() - x) > 15) {  // Solo moverse si hay una diferencia significativa
           if (player.getX() > x) {
             x += speed;
             giro = true;
@@ -61,8 +68,51 @@ class Boss {
 
     spawnMisiles.update();
     spawnAbejas.update(player, x, y + image.height * scale / 2);
-
+    
+    // Detectar colisión con el Player y reducir vida
+    if (checkCollisionWithPlayer()) {
+      takeDamage(10);  // El Boss pierde 10 de vida cada vez que colisiona con el Player
+    }
   }
+  
+    private void takeDamage(int damage) {
+    vida -= damage;
+    if (vida <= 0) {
+      vida = 0;
+      winScenario();  // Mostrar escenario WIN cuando el Boss muere
+    }
+  }
+  
+  
+// Detecta la colisión entre el Boss y el Player
+private boolean checkCollisionWithPlayer() {
+    float bossWidth = image.width * scale;
+    float bossHeight = image.height * scale;
+
+    // Usando las dimensiones del Player si no tiene imagen
+    float playerWidth = 50; // Ejemplo: el ancho del jugador es 50
+    float playerHeight = 100; // Ejemplo: el alto del jugador es 100
+
+    // Verifica si las áreas del Boss y el Player se solapan
+    return (x < player.getX() + playerWidth &&
+            x + bossWidth > player.getX() &&
+            y < player.getY() + playerHeight &&
+            y + bossHeight > player.getY());
+}
+
+
+
+
+
+  private void winScenario() {
+    // Mostrar el escenario de WIN
+    println("¡WIN! El Boss ha sido derrotado.");
+
+    // Verifica si maquinaDeEstado no es null antes de llamar a setEstado
+      maquinaDeEstado.setEstado(MaquinaDeEstado.WIN);
+  }
+  
+  
 
   private void iniciarAdelantamiento() {
     // Calcular la posición objetivo (adelantarse entre 2x y 3x la distancia actual)
@@ -97,13 +147,25 @@ class Boss {
       }
 
       popMatrix();
+      
+
 
       // Mostrar misiles
       spawnMisiles.display();
       // Mostrar abejas
       spawnAbejas.display();
+      drawHitbox();
     }
   }
+
+  /**
+ * Dibuja el hitbox del Boss (rectángulo alrededor de su imagen).
+ */
+private void drawHitbox() {
+    stroke(148, 0, 211);  // Color violeta para el borde (RGB)
+    noFill();  // Sin relleno
+    rect(x, y, image.width * scale, image.height * scale);  // Rectángulo que representa el hitbox
+}
 
   public float getX() {
     return x;
@@ -112,4 +174,9 @@ class Boss {
   public float getY() {
     return y;
   }
+  
+    public int getVida() {
+    return vida;
+  }
+
 }
