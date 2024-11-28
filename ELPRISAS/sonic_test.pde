@@ -6,7 +6,7 @@ private MaquinaDeEstado maquinaDeEstado;
 private SoundFile startMenuSound;  // Variable para el sonido
 private SoundFile gameMusic;
 private Parallax parallax;
-
+SpawnEnemigos spawn;
 // Variables para el jugador
 private PImage spriteSheet;
 private int spriteWidth = 252 / 6;  // Ancho de un sprite (6 columnas)
@@ -84,6 +84,8 @@ void setup() {
   // Establecer una posición manual del escenario
   escenario.setPosicionX(100);  // Desplaza el fondo 100 píxeles a la derecha
   escenario.setPosicionY(55);   // Desplaza el fondo 50 píxeles hacia abajo
+  
+   spawn = new SpawnEnemigos(); // Crear el objeto de spawn
 }
 
 void draw() {
@@ -141,6 +143,8 @@ void draw() {
   
   // Mostrar la información de depuración
   debug.display(sonic, camera);  // Este método ahora maneja la depuración visual para Sonic y la cámara
+  spawn.generarEnemigos(); // Generar enemigos de forma aleatoria
+  spawn.dibujarEnemigos(); // Dibujar los enemigos en pantalla
 }
 
 
