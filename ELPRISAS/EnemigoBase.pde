@@ -7,7 +7,7 @@ class EnemigoBase {
   EnemigoBase(float x, float y, int velocidad) {
     this.position = new PVector(x, y);
     this.velocidad = velocidad;
-    this.sprite = loadImage("buzzer.png"); // Carga el sprite del enemigo
+    this.sprite = loadImage("buzzer1.png"); // Carga el sprite del enemigo
   }
   
   // Método para dibujar al enemigo
