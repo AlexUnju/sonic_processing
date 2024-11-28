@@ -14,7 +14,7 @@ class Boss {
     this.speed = speed;
     this.scale = scale;
     this.player = player;
-    this.giro = true;  // Inicialmente mirando a la derecha
+    this.giro = false;  // Inicialmente mirando a la derecha
 
     // Inicializar el sistema de misiles
     this.spawnMisiles = new SpawnMisiles("Misil.png", 60);  // Un misil cada 60 frames
@@ -32,10 +32,10 @@ class Boss {
         // Mover a Eggman hacia Sonic
         if (player.getX() > x) {
           x += speed;
-          giro = false;  // Mirando hacia la derecha
+          giro = true;  // Mirando hacia la derecha
         } else if (player.getX() < x) {
           x -= speed;
-          giro = true;  // Mirando hacia la izquierda
+          giro = false;  // Mirando hacia la izquierda
         }
       }
 
@@ -48,24 +48,40 @@ class Boss {
   }
 
   public void display() {
-    if (image != null) {
-      float newWidth = image.width * scale;
-      float newHeight = image.height * scale;
+  if (image != null) {
+    // Obtener el tamaño de la imagen escalada
+    float newWidth = image.width * scale;
+    float newHeight = image.height * scale;
 
-      // Si está mirando a la izquierda, rota la imagen 180 grados
-      pushMatrix();
-      if (!giro) {
-        scale(-1, 1);  // Rota la imagen horizontalmente
-        image(image, -x - newWidth, y, newWidth, newHeight);  // Ajusta la posición tras la rotación
-      } else {
-        image(image, x, y, newWidth, newHeight);
-      }
-      popMatrix();
-
-      // Dibujar los misiles
-      spawnMisiles.display();
+    // Dibujar la imagen de Eggman
+    pushMatrix();
+    if (!giro) {
+      scale(-1, 1);  // Rota la imagen horizontalmente si está mirando hacia la izquierda
+      image(image, -x - newWidth, y, newWidth, newHeight);  // Ajusta la posición tras la rotación
+    } else {
+      image(image, x, y, newWidth, newHeight);  // Dibuja la imagen normalmente
     }
+    popMatrix();
+
+    // Dibujar un rectángulo alrededor de la imagen para visualizar su área
+    stroke(255, 0, 0);  // Establecer el color del borde del rectángulo (rojo, por ejemplo)
+    noFill();  // No rellenar el rectángulo, solo dibujar el contorno
+
+    pushMatrix();
+    if (!giro) {
+      // Dibuja el rectángulo alrededor de la imagen cuando está mirando a la izquierda
+      rect(-x - newWidth, y, newWidth, newHeight);
+    } else {
+      // Dibuja el rectángulo alrededor de la imagen cuando está mirando a la derecha
+      rect(x, y, newWidth, newHeight);
+    }
+    popMatrix();
+
+    // Dibujar los misiles
+    spawnMisiles.display();
   }
+}
+
 
   public float getX() {
     return x;
