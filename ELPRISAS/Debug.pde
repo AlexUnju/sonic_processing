@@ -55,7 +55,6 @@ public void toggleDebug(Player player) {
 }
 
 
-
 /**
  * Dibuja un texto con un contorno negro.
  */

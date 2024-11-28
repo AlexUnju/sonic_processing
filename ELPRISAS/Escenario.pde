@@ -6,11 +6,21 @@ class Escenario {
   // Posición manual
   private float posX = 0;  // Posición manual de la imagen en X
   private float posY = 0;  // Posición manual de la imagen en Y
+  
+  // Lista de rectángulos verdes
+  private ArrayList<float[]> rectangulos; // Cada rectángulo: {x, y, ancho, alto}
 
   // Constructor
   // Recibe la ruta de la imagen y el frameDelay (aunque solo usaremos la imagen)
   public Escenario(String rutaFondo) {
     this.escenario = loadImage(rutaFondo);  // Cargar solo una imagen
+    this.rectangulos = new ArrayList<>();
+
+  }
+  
+    // Método para añadir un rectángulo al escenario
+  public void agregarRectangulo(float x, float y, float ancho, float alto) {
+    rectangulos.add(new float[]{x, y, ancho, alto});
   }
 
   // Método para actualizar y dibujar el escenario
@@ -22,6 +32,13 @@ class Escenario {
     if (offsetX + escenario.width < width) {
       image(escenario, posX + offsetX + escenario.width, posY + height - escenario.height);
     }
+    
+       // Dibujar rectángulos verdes
+    fill(0, 255, 0);  // Color verde
+    noStroke();
+    for (float[] rect : rectangulos) {
+      rect(rect[0] + offsetX, rect[1], rect[2], rect[3]); // Ajustar posición por desplazamiento
+    }
   }
 
   // Cambiar el desplazamiento horizontal de la imagen en función del movimiento
@@ -32,6 +49,10 @@ class Escenario {
     if (offsetX <= -escenario.width) {
       offsetX = 0;
     }
+  }
+
+public ArrayList<float[]> getRectangulos() {
+    return rectangulos;
   }
 
   // Métodos para establecer posiciones manuales de la imagen

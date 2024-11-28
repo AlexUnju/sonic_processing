@@ -6,7 +6,7 @@ private MaquinaDeEstado maquinaDeEstado;
 private SoundFile startMenuSound;  // Variable para el sonido
 private SoundFile gameMusic;
 private Parallax parallax;
-SpawnEnemigos spawn;
+
 // Variables para el jugador
 private PImage spriteSheet;
 private int spriteWidth = 252 / 6;  // Ancho de un sprite (6 columnas)
@@ -50,7 +50,7 @@ void setup() {
 
   sonic = new Player(100, height - spriteHeight, spriteWidth, spriteHeight);
   
-  boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 5, 0.25, sonic);
+  boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 4, 0.25, sonic);
 
   // Crear la máquina de estados
   maquinaDeEstado = new MaquinaDeEstado(menu);
@@ -84,12 +84,6 @@ void setup() {
   // Establecer una posición manual del escenario
   escenario.setPosicionX(100);  // Desplaza el fondo 100 píxeles a la derecha
   escenario.setPosicionY(55);   // Desplaza el fondo 50 píxeles hacia abajo
-  
-   spawn = new SpawnEnemigos(); // Crear el objeto de spawn
-    // Agregar rectángulos verdes al escenario
-  escenario.agregarRectangulo(100, 590, 850, 70);
-  escenario.agregarRectangulo(300, 350, 100, 50);
-  escenario.agregarRectangulo(650, 490, 190, 10);
 }
 
 void draw() {
@@ -112,13 +106,16 @@ void draw() {
     }
 
     escenario.dibujar();
-    sonic.update(escenario.getRectangulos());  // Pass rectangles to update method
+    sonic.update();  // Actualiza el estado y la posición del jugador
     sonic.display();  // Muestra al jugador en la pantalla
     
     // Dibujar al jefe
     boss.update();
     boss.display();
-   
+    
+    // Dibujar el suelo (solo visual, no interactúa con la lógica de colisiones)
+    stroke(0);
+    line(-width, height, width * 2, height);
   }
 
   // Verificar si estamos en el estado ENDGAME
@@ -144,16 +141,15 @@ void draw() {
   
   // Mostrar la información de depuración
   debug.display(sonic, camera);  // Este método ahora maneja la depuración visual para Sonic y la cámara
-  spawn.generarEnemigos(); // Generar enemigos de forma aleatoria
-  spawn.dibujarEnemigos(); // Dibujar los enemigos en pantalla
 }
+
 
 void keyPressed() {
   maquinaDeEstado.keyPressed(key);  // Maneja la tecla presionada
   if (key == 'a') sonic.move(-1);   // Mover a la izquierda
   if (key == 'd') sonic.move(1);    // Mover a la derecha
-  if (key == ' ') sonic.jump();     // Salto
-  if (key == 'q') debug.toggleDebug(sonic);  // Alternar la depuración
+      if (key == ' ') sonic.jump();     // Salto
+      if (key == 'q') debug.toggleDebug(sonic);  // Alternar la depuración
   // Simulación de recoger una vida extra
   if (key == 'r') { // Presiona 'r' para ganar una vida
     sonic.ganarVida();

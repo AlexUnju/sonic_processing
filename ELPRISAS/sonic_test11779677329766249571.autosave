@@ -5,8 +5,9 @@ private Menu menu;
 private MaquinaDeEstado maquinaDeEstado;
 private SoundFile startMenuSound;  // Variable para el sonido
 private SoundFile gameMusic;
+private SoundFile jumpSound;  // Variable para el sonido del salto
 private Parallax parallax;
-SpawnEnemigos spawn;
+
 // Variables para el jugador
 private PImage spriteSheet;
 private int spriteWidth = 252 / 6;  // Ancho de un sprite (6 columnas)
@@ -14,7 +15,8 @@ private int spriteHeight = 184 / 4; // Alto de un sprite (4 filas)
 private Player sonic;  // Instancia del jugador
 private Camera camera; // Instancia de la cámara
 private PImage endGameImage;
-private Boss boss;
+// Variable para controlar si la canción se ha reproducido
+private boolean endGameSoundPlayed = false;
 
 //HUD
 private HUD hud;
@@ -22,22 +24,16 @@ private HUD hud;
 // Instancia de la clase Escenario
 private Escenario escenario;
 
-private SoundFile jumpSound;  // Variable para el sonido del salto
-
-
 // Debug
 private Debug debug;
-
-private SoundFile gameoverSound;  // Variable para el sonido del Game Over
-private boolean gameoverSoundPlayed = false;  // Flag para saber si se ha reproducido el Game Over
 
 void setup() {
   size(800, 600);  // Tamaño de la ventana
   String[] fondoArchivos = {"fondo/fondo0.png", "fondo/fondo1.png", "fondo/fondo2.png"};
-  jumpSound = new SoundFile(this, "data/sound/jump.wav");
-
+  
   // Cargar el spriteSheet de Sonic
   spriteSheet = loadImage("sonic/sonic-10.png");
+
   // Crear objeto Parallax
   parallax = new Parallax(fondoArchivos, 1, 1.5, 0, -150, 16);
   
@@ -49,8 +45,6 @@ void setup() {
   menu = new Menu(40, 150, 100, pixelFont);
 
   sonic = new Player(100, height - spriteHeight, spriteWidth, spriteHeight);
-  
-  boss = new Boss("Eggman.png", sonic.getX(), sonic.getY() - 300, 5, 0.25, sonic);
 
   // Crear la máquina de estados
   maquinaDeEstado = new MaquinaDeEstado(menu);
@@ -60,9 +54,8 @@ void setup() {
   startMenuSound.loop();  // Reproduce el sonido en bucle
   
   gameMusic = new SoundFile(this, "data/sound/Sonic_The_Hedgehog.mp3");
+  jumpSound = new SoundFile(this, "data/sound/jump.wav");
 
-  // Cargar sonido de Game Over
-  gameoverSound = new SoundFile(this, "data/sound/gameover.mp3");
 
   // Crear la cámara
   camera = new Camera();
@@ -84,12 +77,6 @@ void setup() {
   // Establecer una posición manual del escenario
   escenario.setPosicionX(100);  // Desplaza el fondo 100 píxeles a la derecha
   escenario.setPosicionY(55);   // Desplaza el fondo 50 píxeles hacia abajo
-  
-   spawn = new SpawnEnemigos(); // Crear el objeto de spawn
-    // Agregar rectángulos verdes al escenario
-  escenario.agregarRectangulo(100, 590, 850, 70);
-  escenario.agregarRectangulo(300, 350, 100, 50);
-  escenario.agregarRectangulo(650, 490, 190, 10);
 }
 
 void draw() {
@@ -106,47 +93,54 @@ void draw() {
 
   // Verificar si estamos en el estado ESCENARIO
   if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ESCENARIO) {
-     if (!gameMusic.isPlaying()) {
+    if (!gameMusic.isPlaying()) {
       startMenuSound.stop();  // Detener música del menú
       gameMusic.loop();       // Reproducir música del juego en bucle
     }
-
     escenario.dibujar();
-    sonic.update(escenario.getRectangulos());  // Pass rectangles to update method
+    sonic.update();  // Actualiza el estado y la posición del jugador
     sonic.display();  // Muestra al jugador en la pantalla
-    
-    // Dibujar al jefe
-    boss.update();
-    boss.display();
-   
-  }
 
-  // Verificar si estamos en el estado ENDGAME
-  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ENDGAME) {
-    if (!gameoverSoundPlayed) {
-      gameMusic.stop();  // Detener la música de fondo del juego
-      gameoverSound.play();  // Reproducir sonido de Game Over
-      gameoverSoundPlayed = true;  // Marcar como reproducido
+    // Dibujar el suelo (solo visual, no interactúa con la lógica de colisiones)
+    stroke(0);
+    line(-width, height, width * 2, height);
+  } 
+  // Si estamos en el estado ENDGAME, reproducimos la música una sola vez
+  else if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ENDGAME) {
+    // Si no se ha reproducido la canción aún
+    if (!endGameSoundPlayed) {
+  gameMusic.stop();  // Detener música de fondo
+  SoundFile endGameMusic = new SoundFile(this, "data/sound/gameover.mp3");
+  endGameMusic.play(); // Reproducir sonido de Game Over
+  endGameSoundPlayed = true;  // Marcar como reproducido
+}
+
+    // Mostrar imagen de fin de juego
+    background(0); // Fondo negro para mayor contraste
+    if (endGameImage != null) {
+      imageMode(CENTER);
+      image(endGameImage, width / 2, height / 2 - 50);
     }
 
-    // Aquí puedes mostrar la pantalla de fin de juego
-    image(endGameImage, 0, 0);
+    // Mostrar el texto
+    textAlign(CENTER, CENTER);
+    fill(255);
+    textSize(20);
+    text("Pulsa ESC para salir", width / 2, height / 2 + 150);
   }
 
   popMatrix();  // Vuelve a la matriz original para no afectar el resto
   
-  //HUD
-   // Dibujar HUD
+  // Dibujar HUD
   hud.display();
   
-  // Actualizar la máquina de estados (esta controla qué se dibuja)
+  // Actualizar la máquina de estados
   maquinaDeEstado.update();
   
   // Mostrar la información de depuración
   debug.display(sonic, camera);  // Este método ahora maneja la depuración visual para Sonic y la cámara
-  spawn.generarEnemigos(); // Generar enemigos de forma aleatoria
-  spawn.dibujarEnemigos(); // Dibujar los enemigos en pantalla
 }
+
 
 void keyPressed() {
   maquinaDeEstado.keyPressed(key);  // Maneja la tecla presionada
@@ -156,14 +150,16 @@ void keyPressed() {
   if (key == 'q') debug.toggleDebug(sonic);  // Alternar la depuración
   // Simulación de recoger una vida extra
   if (key == 'r') { // Presiona 'r' para ganar una vida
-    sonic.ganarVida();
+  sonic.ganarVida();
   }
-  
-// Cambiar al estado ENDGAME al presionar 'l' o 'L' en estado ESCENARIO
-  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ESCENARIO && (key == 'l' || key == 'L')) {
+// Cambiar a estado ENDGAME con 'L'
+if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ESCENARIO && (key == 'l' || key == 'L')) {
     maquinaDeEstado.setEstado(MaquinaDeEstado.ENDGAME);
-  }
+}
 
+
+
+  
   // Salir del juego al presionar ESC en estado END_GAME
   if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ENDGAME && key == ESC) {
     exit();

@@ -1,39 +1,42 @@
 // Clase Player
 class Player {
-// Atributos para posición y movimiento
-private PVector position;    // Almacena la posición del jugador en el espacio 2D.
-private float yVel = 0;      // Velocidad en el eje Y (usada para el salto y la gravedad).
-private float xVel = 0;      // Velocidad en el eje X (usada para el movimiento).
-private float gravity = 0.8; // Aceleración de la gravedad.
-private float jumpStrength = -15; // Fuerza del salto (el valor negativo lo hace hacia arriba).
-private float speed = 2;     // Velocidad de movimiento horizontal del jugador.
-private float maxSpeed = 5;  // Velocidad máxima que el jugador puede alcanzar.
-private float friction = 0.8; // Fricción, reduce la velocidad al mover.
-private boolean jumping = false; // Determina si el jugador está en el aire.
-private float animationSpeed = 3.0; // Controla la velocidad de la animación.
+  // Atributos para posición y movimiento
+  private PVector position;    // Almacena la posición del jugador en el espacio 2D.
+  private float yVel = 0;      // Velocidad en el eje Y (usada para el salto y la gravedad).
+  private float xVel = 0;      // Velocidad en el eje X (usada para el movimiento).
+  private float gravity = 0.8; // Aceleración de la gravedad.
+  private float jumpStrength = -15; // Fuerza del salto (el valor negativo lo hace hacia arriba).
+  private float speed = 2;     // Velocidad de movimiento horizontal del jugador.
+  private float maxSpeed = 5;  // Velocidad máxima que el jugador puede alcanzar.
+  private float friction = 0.8; // Fricción, reduce la velocidad al mover.
+  private boolean jumping = false; // Determina si el jugador está en el aire.
+  private float animationSpeed = 3.0; // Controla la velocidad de la animación.
 
-private float frame = 0;     // Controla el frame actual para la animación.
-private int cols = 6;        // Número de columnas en el sprite (cuántos frames por fila).
-private int rows = 4;        // Número de filas en el sprite (cuántas animaciones hay).
-private int spriteWidth, spriteHeight; // Dimensiones del sprite.
+  private float frame = 0;     // Controla el frame actual para la animación.
+  private int cols = 6;        // Número de columnas en el sprite (cuántos frames por fila).
+  private int rows = 4;        // Número de filas en el sprite (cuántas animaciones hay).
+  private int spriteWidth, spriteHeight; // Dimensiones del sprite.
 
-private boolean facingLeft = false; // Indica si el jugador está mirando hacia la izquierda.
-private boolean isAnimating = false; // Si se está animando o no.
+  private boolean facingLeft = false; // Indica si el jugador está mirando hacia la izquierda.
+  private boolean isAnimating = false; // Si se está animando o no.
 
-private String state = "Idle"; // Estado actual del jugador (Idle, Running, Jumping, etc.)
+  private String state = "Idle"; // Estado actual del jugador (Idle, Running, Jumping, etc.)
 
-// Temporizadores y umbrales
-private int moveTimer = 0;   // Temporizador para manejar el movimiento.
-private int moveThreshold = 20; // Umbral para actualizar el movimiento.
+  // Temporizadores y umbrales
+  private int moveTimer = 0;   // Temporizador para manejar el movimiento.
+  private int moveThreshold = 20; // Umbral para actualizar el movimiento.
 
-private int jumpTimer = 0;   // Temporizador para el salto.
-private int jumpDelay = 5;   // Retraso para controlar la rapidez del salto.
+  private int jumpTimer = 0;   // Temporizador para el salto.
+  private int jumpDelay = 5;   // Retraso para controlar la rapidez del salto.
+  
+  private boolean onGround = false;
 
-private ArrayList<PVector> trajectory = new ArrayList<PVector>(); // Trayectoria del jugador para mostrar.
-private boolean showHitbox = false;  // Si se debe mostrar la caja de colisión del jugador.
-private boolean showTrajectory = false; // Si se debe mostrar la trayectoria del jugador.
 
-private int vidas; // Número de vidas del jugador.
+  private ArrayList<PVector> trajectory = new ArrayList<PVector>(); // Trayectoria del jugador para mostrar.
+  private boolean showHitbox = false;  // Si se debe mostrar la caja de colisión del jugador.
+  private boolean showTrajectory = false; // Si se debe mostrar la trayectoria del jugador.
+
+  private int vidas; // Número de vidas del jugador.
 
 
   /**
@@ -94,71 +97,76 @@ public void jump() {
     jumpTimer = 0; // Reinicia el temporizador del salto.
     jumpSound.play();  // Reproduce el sonido de salto
   }
+      if (onGround) {
+      yVel = jumpStrength;
+      onGround = false;
+      jumpSound.play();
+    }
 }
 
-  /**
-   * Actualiza el estado y la posición del jugador.
-   */
-public void update() {
-  // Cambia a estado "Running" si se ha movido lo suficiente
+  public void update(ArrayList<float[]> rectangulos) {
+  // Apply gravity if not on ground
+  if (!onGround) {
+    yVel += gravity;
+  }
+
+  // Change to "Running" state if moved enough
   if (moveTimer >= moveThreshold && !jumping) {
     state = "Running";
   }
 
-  // Aplica velocidad horizontal
+  // Apply horizontal and vertical velocity
   position.x += xVel;
+  position.y += yVel;
 
-  // Aplica fricción si está en estado de inercia
-  if (state.equals("Inertia")) {
-    // La fricción se aplica solo si la velocidad es mayor que un umbral mínimo
-    xVel *= friction;
-
-    // Detener completamente si la velocidad es muy baja, pero no de inmediato
-    if (abs(xVel) < 0.1) {
-      xVel = 0;  // Detener completamente si la velocidad es muy baja
-      state = "Idle";  // Cambiar a estado "Idle" cuando la inercia termine
+  // Check collisions with rectangles
+  onGround = false;
+  for (float[] rect : rectangulos) {
+    if (isColliding(position.x, position.y, spriteWidth, spriteHeight, rect)) {
+      // If player is falling, stop the fall and adjust position
+      if (yVel > 0 && position.y + spriteHeight <= rect[1] + yVel) {
+        position.y = rect[1] - spriteHeight;
+        onGround = true;
+        yVel = 0;
+        jumping = false;
+        
+        // Change state based on horizontal velocity
+        if (abs(xVel) > 0.1) {
+          state = "Inertia";
+        } else {
+          state = "Idle";
+        }
+        
+        // Clear trajectory on landing
+        trajectory.clear();
+      }
+      // Allow player to pass through from below
+      else if (yVel < 0) {
+        continue;
+      }
     }
   }
 
-  // Aplica gravedad
-  position.y += yVel;
-  yVel += gravity;
-  
-    // Agregar puntos de la trayectoria solo cuando el jugador está saltando
+  // Apply friction if in "Inertia" state
+  if (state.equals("Inertia")) {
+    xVel *= friction;
+    if (abs(xVel) < 0.1) {
+      xVel = 0;
+      state = "Idle";
+    }
+  }
+
+  // Apply additional friction when on ground
+  if (onGround) {
+    xVel *= 0.9;
+  }
+
+  // Add trajectory points when jumping
   if (jumping) {
     trajectory.add(new PVector(position.x, position.y));
   }
-  
-    // Maneja colisión con el suelo y finalización del salto
-  if (position.y >= height - spriteHeight) {
-    position.y = height - spriteHeight;
-    yVel = 1;
-    if (state.equals("Jumping")) {
-      state = (abs(xVel) > 0.1) ? "Inertia" : "Idle";
-    }
-    jumping = false;
-    
-    // Limpiar la trayectoria al aterrizar
-    trajectory.clear();
-  }
-  
-    position.y = constrain(position.y, 0, height - spriteHeight);
 
-
-  // Maneja colisión con el suelo y finalización del salto
-  if (position.y >= height - spriteHeight) {
-    position.y = height - spriteHeight;
-    yVel = 1;
-    if (state.equals("Jumping")) {
-      // Si hay velocidad horizontal, cambiar a "Inertia"
-      state = (abs(xVel) > 0.1) ? "Inertia" : "Idle";
-    }
-    jumping = false;
-  }
-  
-  position.y = constrain(position.y, 0, height - spriteHeight);
-
-  // Actualiza la animación de salto
+  // Update jump animation
   if (jumping && state.equals("Jumping")) {
     jumpTimer++;
     if (jumpTimer >= jumpDelay) {
@@ -170,37 +178,28 @@ public void update() {
     }
   }
 
-  // Actualiza la velocidad de animación basada en el estado del jugador
+  // Update animation speed based on player state
   if (state.equals("Inertia") || state.equals("Running")) {
     animationSpeed = map(abs(xVel), 0, maxSpeed, 0.1, 1.0);
     isAnimating = true;
   } else if (state.equals("Idle")) {
     animationSpeed = 0;
     isAnimating = false;
-    frame = 0; // Mantener el frame en 0 para el estado Idle
+    frame = 0;
   } else {
     animationSpeed = 0.5;
     isAnimating = true;
   }
 
-  // Actualiza el frame de la animación solo si está animando
+  // Update animation frame if animating
   if (isAnimating) {
     frame = (frame + animationSpeed) % cols;
   }
-  
-    // Al aterrizar
-  if (position.y >= height - spriteHeight) {
-    position.y = height - spriteHeight;
-    yVel = 1;
-    if (state.equals("Jumping")) {
-      state = (abs(xVel) > 0.1) ? "Inertia" : "Idle";
-    }
-    jumping = false;
-    
-    // Limpiar la trayectoria al aterrizar
-    trajectory.clear();
-  }
-}
+
+  // Constrain player position to screen bounds
+  position.x = constrain(position.x, 0, width - spriteWidth);
+  position.y = constrain(position.y, 0, height - spriteHeight);
+}  
 
  /**
    * Dibuja el hitbox si está habilitado.
@@ -208,7 +207,7 @@ public void update() {
   public void drawHitbox() {
     if (showHitbox) {
       noFill();
-      stroke(0, 255, 0); // Color verde para la hitbox
+      stroke(#FF0303); // Color rojpara la hitbox
       rectMode(CENTER);
       rect(position.x + 20, position.y + 20, spriteWidth, spriteHeight);
     }
@@ -238,6 +237,17 @@ public void drawTrajectory() {
   }
   }
 }
+
+  private boolean isColliding(float x1, float y1, float w1, float h1, float[] rect) {
+    float x2 = rect[0];
+    float y2 = rect[1];
+    float w2 = rect[2];
+    float h2 = rect[3];
+    
+    return x1 < x2 + w2 && x1 + w1 > x2 &&
+           y1 < y2 + h2 && y1 + h1 > y2;
+  }
+
 
 
   /**
@@ -279,6 +289,8 @@ public void drawTrajectory() {
     // Dibuja el hitbox y la trayectoria en función del estado de depuración
     drawHitbox();
     drawTrajectory();
+    
+    rect(position.x, position.y, spriteWidth, spriteHeight);
   }
 
   // Getters and setters
