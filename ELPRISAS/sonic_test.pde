@@ -14,6 +14,8 @@ private int spriteHeight = 184 / 4; // Alto de un sprite (4 filas)
 private Player sonic;  // Instancia del jugador
 private Camera camera; // Instancia de la cámara
 private PImage endGameImage;
+private Win win;
+
 private Boss boss;
 
 //HUD
@@ -40,6 +42,9 @@ void setup() {
   spriteSheet = loadImage("sonic/sonic-10.png");
   // Crear objeto Parallax
   parallax = new Parallax(fondoArchivos, 1, 1.5, 0, -150, 16);
+  // Crear una instancia de la clase Win
+  win = new Win();
+
   
   // Cargar la imagen de fin de juego
   endGameImage = loadImage("endgame.png");
@@ -122,7 +127,12 @@ void draw() {
     spawn.generarEnemigos(); // Generar enemigos de forma aleatoria
     spawn.dibujarEnemigos(); // Dibujar los enemigos en pantalla   
   }
-
+  
+  // Verificar si estamos en el estado WIN (pantalla de victoria)
+  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.WIN) {
+    win.display();  // Mostrar la pantalla de victoria
+  }
+  
   // Verificar si estamos en el estado ENDGAME
   if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ENDGAME) {
     if (!gameoverSoundPlayed) {
@@ -159,7 +169,10 @@ void keyPressed() {
   if (key == 'r') { // Presiona 'r' para ganar una vida
     sonic.ganarVida();
   }
-  
+  // Cambiar al estado WIN al presionar la tecla 'p'
+  if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ESCENARIO && key == 'p') {
+    maquinaDeEstado.setEstado(MaquinaDeEstado.WIN);
+  }
 // Cambiar al estado ENDGAME al presionar 'l' o 'L' en estado ESCENARIO
   if (maquinaDeEstado.getEstado() == MaquinaDeEstado.ESCENARIO && (key == 'l' || key == 'L')) {
     maquinaDeEstado.setEstado(MaquinaDeEstado.ENDGAME);

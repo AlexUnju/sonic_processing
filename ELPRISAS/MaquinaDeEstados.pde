@@ -1,13 +1,14 @@
 class MaquinaDeEstado {
   private Menu menu;
   private Escenario escenario;
+  private Win win;  // Añadir la referencia a la clase Win
 
-  public static final int INICIO = 0;     // Campo estático
-  public static final int ESPERA = 1;     // Campo estático
-  public static final int TRANSICION = 2; // Campo estático
-  public static final int ESCENARIO = 3;  // Campo estático
-  public static final int ENDGAME = 4;  // Campo estático
-
+  public static final int INICIO = 0;
+  public static final int ESPERA = 1;
+  public static final int TRANSICION = 2;
+  public static final int ESCENARIO = 3;
+  public static final int ENDGAME = 4;
+  public static final int WIN = 5; // Nuevo estado WIN
 
   private int estado = INICIO;
   private int textAlpha = 255;
@@ -17,6 +18,7 @@ class MaquinaDeEstado {
   public MaquinaDeEstado(Menu menu) {
     this.menu = menu;
     this.escenario = new Escenario("escenario/scene0.png");
+    this.win = new Win();  // Inicializar la clase Win
   }
 
   public void update() {
@@ -29,11 +31,10 @@ class MaquinaDeEstado {
         } else {
           estado = ESPERA;
         }
-        menu.drawMenu("", 255);  // No dibuja texto en INICIO
+        menu.drawMenu("", 255);
         break;
 
       case ESPERA:
-        // Cicla el menú y anima el texto
         if (frameCount % 5 == 0) {
           int current = menu.getCurrentFrame();
           if (current < 12 || current >= 29) {
@@ -74,33 +75,28 @@ class MaquinaDeEstado {
         if (animacionFinalizada) {
           estado = ESCENARIO;
           animacionFinalizada = false;
-          // Reiniciar la posición del parallax al entrar al estado ESCENARIO
-          parallax.setMovimientoManual(true);  // Activar control manual
-          parallax.reiniciarPosicion();  // Método para reiniciar la posición del parallax
         }
         break;
 
       case ESCENARIO:
-        // En el estado ESCENARIO, el movimiento es manual
-        parallax.setMovimientoManual(true);  // Activar control manual
-
-        // Ahora sí, dibuja el escenario en este estado
-
-        // Ya no es necesario dibujar a Sonic aquí, ya lo haces en el 'sketch'
+        // Aquí agregamos la lógica del juego mientras está en el escenario.
         break;
+
       case ENDGAME:
-        // Mostrar imagen de fin de juego
-        background(0); // Fondo negro para mayor contraste
+        background(0);
         if (endGameImage != null) {
           imageMode(CENTER);
           image(endGameImage, width / 2, height / 2 - 50);
         }
-
-        // Mostrar el texto
         textAlign(CENTER, CENTER);
         fill(255);
         textSize(20);
         text("Pulsa ESC para salir", width / 2, height / 2 + 150);
+        break;
+
+      case WIN:
+        // Mostrar pantalla de victoria
+        win.display();
         break;
     }
   }
@@ -109,15 +105,13 @@ class MaquinaDeEstado {
     if (estado == ESPERA && key == ENTER) {
       estado = TRANSICION;
       textAlpha = 255;
-      parallax.setMovimientoManual(false);  // Desactivar movimiento automático al pasar a la transición
     }
   }
-  
+
   public void setEstado(int nuevoEstado) {
     estado = nuevoEstado;
   }
 
-  // Getter para obtener el estado actual
   public int getEstado() {
     return estado;
   }
