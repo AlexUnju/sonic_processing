@@ -22,17 +22,19 @@ class Misil {
     float newWidth = image.width * scale;
     float newHeight = image.height * scale;
 
-    // Dibuja el misil en la pantalla
+    // Dibujar la imagen del misil centrada en (x, y)
     if (image != null) {
-      image(image, x - newWidth / 2, y, newWidth, newHeight);  // Centra el misil horizontalmente
+      image(image, x - newWidth / 2, y, newWidth, newHeight);  // Centra la imagen horizontalmente
     }
 
     // Dibujar el contorno alrededor de la imagen
     noFill();  // No rellenar el rectángulo
     stroke(255, 0, 0);  // Color rojo para el contorno (puedes cambiarlo)
 
-    // Dibuja un contorno alrededor de la imagen del misil
-    rect(x - newWidth / 2, y, newWidth, newHeight);  // Rectángulo alrededor de la imagen
+    // Calcular la posición del rectángulo para que esté centrado alrededor de la imagen
+    float rectX = x;  // Alineación horizontal
+    float rectY = y - newHeight + 90;                 // Alineación vertical con la imagen
+    rect(rectX, rectY, newWidth, newHeight);  // Dibuja el rectángulo de contorno
   }
 
   public float getX() {
