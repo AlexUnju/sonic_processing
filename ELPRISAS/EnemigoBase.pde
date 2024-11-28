@@ -1,7 +1,7 @@
-class EnemigoBase {
-  PVector position;
-  PImage sprite; // Imagen del enemigo
-  int velocidad;
+abstract class EnemigoBase {
+  protected PVector position;
+  private PImage sprite; // Imagen del enemigo
+  protected int velocidad;
   
   // Constructor de la clase base
   EnemigoBase(float x, float y, int velocidad) {

@@ -1,5 +1,5 @@
-class SpawnEnemigos {
-  ArrayList<EnemigoBase> enemigos; // Lista para almacenar enemigos
+private class SpawnEnemigos {
+  public ArrayList<EnemigoBase> enemigos; // Lista para almacenar enemigos
   
   SpawnEnemigos() {
     enemigos = new ArrayList<EnemigoBase>();
